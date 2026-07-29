@@ -245,8 +245,9 @@ Explica brevemente al final cómo esta estructura aplica el principio de Inversi
 
 **Ajustes que hice:** en el método `update()`, la IA usó `COALESCE($1, titulo)` en cada columna, lo que convertía la actualización en parcial (como un PATCH). Pero el enunciado pide que PUT sea una actualización **completa**, distinta del PATCH que ya existe para el estado. Cambié el `UPDATE` para que reemplace todos los campos directamente (`SET titulo = $1, ...`), sin `COALESCE`, y ahora exige que todos los campos vengan presentes.
 
-**Evidencia de la conversación:**
-![Prompt 1 - repositorio](/P1/capturas/prompt-1-repositorio.png)
+#### Evidencia de la conversación
+
+![Prompt 1 - repositorio](capturas/prompt-1-repositorio.png)
 
 ### Prompt 2: Capa de servicio (SRP)
 
@@ -272,8 +273,9 @@ Explica al final por qué esta clase cumple el Principio de Responsabilidad Úni
 
 **Ajustes que hice:** `_validarDatosActualizacion` solo validaba los campos que llegaran presentes (`if (titulo !== undefined) ...`), es decir, trataba la actualización como parcial. Esto ya no era consistente con la corrección que hice en el repositorio (donde el `update()` ahora exige todos los campos). Cambié el método para que valide **todos** los campos obligatorios siempre, igual que en la creación, manteniendo el PUT como una actualización completa de principio a fin.
 
-**Evidencia de la conversación:**
-![Prompt 2 - servicio](/P1/capturas/prompt-2-servicio.png)
+#### Evidencia de la conversación
+
+![Prompt 2 - servicio](capturas/prompt-2-servicio.png)
 
 ### Prompt 3: Capa de controlador y rutas (REST)
 
@@ -305,8 +307,9 @@ Explica al final cómo esta separación entre controller y service aplica el pri
 
 **Ajustes que hice:** tuve que pedirle explícitamente que generara `asyncHandler.js` y `errorHandler.js`, que faltaban para que el proyecto compilara. Además, todos los `require()` que generó asumían que los archivos estarían en la misma carpeta; tuve que corregir las rutas de importación para que coincidieran con mi estructura real de carpetas (`../interfaces/`, `../services/`, `../middlewares/`, etc.).
 
-**Evidencia de la conversación:**
-![Prompt 3 - controlador y rutas](/P1/capturas/prompt-3-controlador-rutas.png)
+#### Evidencia de la conversación
+
+![Prompt 3 - controlador y rutas](capturas/prompt-3-controlador-rutas.png)
 
 ### Prompt 4: Corrección de conexión a base de datos (fuera del set original)
 
@@ -323,33 +326,34 @@ También agregué `require('dotenv').config();` al inicio de `app.js`, que la IA
 
 Adicionalmente, la conexión directa de Supabase (`db.xxxx.supabase.co:5432`) no resolvía en mi red (error `ENOTFOUND`), así que cambié a la cadena de "Transaction pooler" que ofrece Supabase (`...pooler.supabase.com:6543`), que sí funcionó.
 
-**Evidencia de la conversación:**
-![Prompt 4 - corrección de conexión](/P1/capturas/prompt-4-conexion-bd.png)
+#### Evidencia de la conversación
+
+![Prompt 4 - corrección de conexión](capturas/prompt-4-conexion-bd.png)
 
 ## Capturas de prueba
 
 Pruebas realizadas con Postman contra la base de datos real en Supabase.
 
 ### POST - Crear solicitud (201)
-![Crear solicitud](/P1/capturas/01-post-crear-solicitud.png)
+![Crear solicitud](capturas/01-post-crear-solicitud.png)
 
 ### GET - Listar todas las solicitudes (200)
-![Listar solicitudes](/P1/capturas/02-get-listar-solicitudes.png)
+![Listar solicitudes](capturas/02-get-listar-solicitudes.png)
 
 ### PUT - Actualización completa (200)
-![Actualizar completa](/P1/capturas/03-put-actualizar-completa.png)
+![Actualizar completa](capturas/03-put-actualizar-completa.png)
 
 ### PATCH - Cambiar únicamente el estado (200)
-![Cambiar estado](/P1/capturas/04-patch-cambiar-estado.png)
+![Cambiar estado](capturas/04-patch-cambiar-estado.png)
 
 ### DELETE - Eliminar solicitud (200)
-![Eliminar solicitud](/P1/capturas/05-delete-eliminar.png)
+![Eliminar solicitud](capturas/05-delete-eliminar.png)
 
 ### Validación - Prioridad fuera de rango (400)
-![Error prioridad inválida](/P1/capturas/06-error-prioridad-invalida.png)
+![Error prioridad inválida](capturas/06-error-prioridad-invalida.png)
 
 ### Validación - Título vacío (400)
-![Error título vacío](/P1/capturas/07-error-titulo-vacio.png)
+![Error título vacío](capturas/07-error-titulo-vacio.png)
 
 ### Validación - Solicitud inexistente (404)
-![Error id no encontrado](/P1/capturas/08-error-id-no-encontrado.png)
+![Error id no encontrado](capturas/08-error-id-no-encontrado.png)
