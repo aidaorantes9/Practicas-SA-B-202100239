@@ -1,0 +1,22 @@
+# Dependencias
+**/node_modules/
+
+# Variables de entorno (NUNCA subir credenciales reales)
+**/.env
+**/.env.local
+
+# Compilados
+**/dist/
+**/build/
+
+# Logs
+**/*.log
+npm-debug.log*
+
+# Editor / OS
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Vite
+**/.vite/
