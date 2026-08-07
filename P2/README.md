@@ -139,25 +139,6 @@ sequenceDiagram
     end
 ```
 
-## Diagrama de secuencia ,  Retry/backoff hacia el microservicio de autorización
-
-```mermaid
-sequenceDiagram
-    participant AUTH as auth-service
-    participant AUTHZ as authz-service
-
-    AUTH->>AUTHZ: POST /authorize (intento 1)
-    AUTHZ--xAUTH: Timeout / sin respuesta
-    AUTH->>AUTH: Espera (backoff x intento 1)
-    AUTH->>AUTHZ: POST /authorize (intento 2)
-    AUTHZ--xAUTH: Timeout / sin respuesta
-    AUTH->>AUTH: Espera (backoff x intento 2)
-    AUTH->>AUTHZ: POST /authorize (intento 3, último)
-    AUTHZ--xAUTH: Timeout / sin respuesta
-    AUTH->>AUTH: Se agotan los reintentos
-    Note over AUTH: Acceso denegado por error de comunicación
-```
-
 ## Principios SOLID aplicados
 
 ### Single Responsibility (S)
