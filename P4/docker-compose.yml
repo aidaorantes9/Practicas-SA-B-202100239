@@ -1,0 +1,169 @@
+version: "3.9"
+
+# este archivo levanta todo el sistema con un solo comando: docker compose up
+# cada microservicio tiene su propia base de datos postgres, separada de las demas
+
+services:
+
+  # base de datos del auth service
+  auth-db:
+    image: postgres:16-alpine
+    container_name: auth-db
+    environment:
+      POSTGRES_USER: auth_user
+      POSTGRES_PASSWORD: auth_pass
+      POSTGRES_DB: auth_db
+    volumes:
+      - auth_db_data:/var/lib/postgresql/data
+    networks:
+      - tattoo-network
+
+  # base de datos del artists service
+  artists-db:
+    image: postgres:16-alpine
+    container_name: artists-db
+    environment:
+      POSTGRES_USER: artists_user
+      POSTGRES_PASSWORD: artists_pass
+      POSTGRES_DB: artists_db
+    volumes:
+      - artists_db_data:/var/lib/postgresql/data
+    networks:
+      - tattoo-network
+
+  # base de datos del appointments service
+  appointments-db:
+    image: postgres:16-alpine
+    container_name: appointments-db
+    environment:
+      POSTGRES_USER: appointments_user
+      POSTGRES_PASSWORD: appointments_pass
+      POSTGRES_DB: appointments_db
+    volumes:
+      - appointments_db_data:/var/lib/postgresql/data
+    networks:
+      - tattoo-network
+
+  # base de datos del notification service
+  notification-db:
+    image: postgres:16-alpine
+    container_name: notification-db
+    environment:
+      POSTGRES_USER: notification_user
+      POSTGRES_PASSWORD: notification_pass
+      POSTGRES_DB: notification_db
+    volumes:
+      - notification_db_data:/var/lib/postgresql/data
+    networks:
+      - tattoo-network
+
+  # microservicio de autenticacion, node js + express, rest
+  # reutiliza la logica de la practica 2 (jwt en cookie, aes, roles)
+  auth-service:
+    build: ./auth-service
+    container_name: auth-service
+    ports:
+      - "4000:4000"
+    environment:
+      PORT: 4000
+      DB_HOST: auth-db
+      DB_PORT: 5432
+      DB_USER: auth_user
+      DB_PASSWORD: auth_pass
+      DB_NAME: auth_db
+      JWT_SECRET: cambia_este_secreto_en_produccion
+      JWT_EXPIRES_IN_SECONDS: 3600
+      AES_SECRET_KEY: "12345678901234567890123456789012"
+      HMAC_SECRET_KEY: otro_secreto_para_el_hash_del_correo
+    depends_on:
+      - auth-db
+    networks:
+      - tattoo-network
+
+  # microservicio del catalogo de artistas, python + fastapi, graphql
+  artists-service:
+    build: ./artists-service
+    container_name: artists-service
+    ports:
+      - "4001:4001"
+    environment:
+      PORT: 4001
+      DB_HOST: artists-db
+      DB_PORT: 5432
+      DB_USER: artists_user
+      DB_PASSWORD: artists_pass
+      DB_NAME: artists_db
+    depends_on:
+      - artists-db
+    networks:
+      - tattoo-network
+
+  # microservicio de citas, node js + express, graphql
+  # se comunica directo con artists service y notification service
+  appointments-service:
+    build: ./appointments-service
+    container_name: appointments-service
+    ports:
+      - "4002:4002"
+    environment:
+      PORT: 4002
+      DB_HOST: appointments-db
+      DB_PORT: 5432
+      DB_USER: appointments_user
+      DB_PASSWORD: appointments_pass
+      DB_NAME: appointments_db
+      ARTISTS_SERVICE_URL: http://artists-service:4001
+      NOTIFICATION_SERVICE_URL: http://notification-service:4003
+    depends_on:
+      - appointments-db
+      - artists-service
+    networks:
+      - tattoo-network
+
+  # microservicio de notificaciones, node js + express, rest
+  notification-service:
+    build: ./notification-service
+    container_name: notification-service
+    ports:
+      - "4003:4003"
+    environment:
+      PORT: 4003
+      DB_HOST: notification-db
+      DB_PORT: 5432
+      DB_USER: notification_user
+      DB_PASSWORD: notification_pass
+      DB_NAME: notification_db
+    depends_on:
+      - notification-db
+    networks:
+      - tattoo-network
+
+  # api gateway, unico punto de entrada del sistema
+  api-gateway:
+    build: ./api-gateway
+    container_name: api-gateway
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: 3000
+      AUTH_SERVICE_URL: http://auth-service:4000
+      ARTISTS_SERVICE_URL: http://artists-service:4001
+      APPOINTMENTS_SERVICE_URL: http://appointments-service:4002
+      NOTIFICATION_SERVICE_URL: http://notification-service:4003
+    depends_on:
+      - auth-service
+      - artists-service
+      - appointments-service
+      - notification-service
+    networks:
+      - tattoo-network
+
+networks:
+  tattoo-network:
+    driver: bridge
+
+volumes:
+  auth_db_data:
+  artists_db_data:
+  appointments_db_data:
+  notification_db_data:
