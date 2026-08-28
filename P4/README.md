@@ -24,6 +24,23 @@ El cliente se conecta únicamente al API Gateway, que enruta cada petición haci
 
 Se cumple el requerimiento de al menos 2 lenguajes distintos (Node.js y Python) y GraphQL implementado en al menos 2 servicios (Artists y Appointments).
 
+### 3.1 Qué hace cada microservicio
+
+**Auth Service** — servicio de autenticación completo, no solo login. Expone:
+- `register`: crea una cuenta nueva (cliente, artista o admin), encriptando nombre y correo, y hasheando la contraseña.
+- `login`: valida credenciales y entrega un JWT en cookie HTTP-only.
+- `logout`: cierra la sesión.
+- `me`: devuelve los datos del usuario logueado.
+- `verify`: endpoint interno que usa el API Gateway para validar el token de cualquier petición protegida, sin que los demás microservicios tengan que repetir la lógica de JWT.
+
+**Artists Service** — administra el catálogo público de tatuadores del estudio. Permite listar artistas, consultar uno por id, registrar un artista nuevo, y cambiar su disponibilidad general. Expone además un endpoint REST interno (`/internal/artists/{id}/availability`) que solo consume `Appointments Service` de forma directa, sin pasar por el Gateway.
+
+**Appointments Service** — es el núcleo del negocio. Permite crear una cita (validando primero disponibilidad general del artista contra Artists Service, y luego que no haya choque de horario dentro de su propia base de datos), listar y consultar citas, actualizar su estado (`completada`, `cancelada`), y registrar el pago del anticipo mediante `registerDeposit`, que es el único camino válido para que una cita pase a `agendada`. Al crear una cita exitosamente, notifica de forma directa a Notification Service.
+
+**Notification Service** — recibe el aviso disparado por Appointments Service cuando se crea una cita, arma un mensaje legible (fecha, hora, zona del cuerpo, diseño) y lo guarda como notificación entregada al cliente. Expone también un endpoint para consultar el historial de notificaciones de un cliente.
+
+**API Gateway** — único punto de entrada del sistema. Enruta cada petición hacia el microservicio correspondiente, y para las rutas que requieren sesión (Appointments y Notification) valida el token contra Auth Service antes de reenviar la petición, agregando el id y el rol del usuario como headers internos.
+
 ## 4. Integración con la autenticación de la Práctica 2
 
 `Auth Service` reutiliza el módulo desarrollado en la Práctica 2: JWT almacenado en cookie HTTP-only, datos sensibles (nombre y correo) encriptados con AES-256-CBC, y un hash HMAC-SHA256 del correo para poder buscar en el login sin desencriptar toda la tabla. Los roles se ajustaron al contexto de esta práctica: `admin`, `artist`, `client`.
@@ -84,7 +101,7 @@ Se presenta como un diagrama único con las 4 entidades (una por cada base de da
 Implementado en dos servicios, usando un esquema SDL (Schema Definition Language):
 
 - **Artists Service** (Python, librería Strawberry): queries `artists`, `artist(id)`; mutations `createArtist`, `setAvailability`.
-- **Appointments Service** (Node.js, librería express-graphql): queries `appointments`, `appointment(id)`; mutations `createAppointment`, `updateAppointmentStatus`.
+- **Appointments Service** (Node.js, librería express-graphql): queries `appointments`, `appointment(id)`; mutations `createAppointment`, `updateAppointmentStatus`, `registerDeposit`.
 
 Se eligió GraphQL para estos dos servicios porque ambos exponen datos con forma variable según el consumidor (el catálogo de artistas y el detalle de una cita pueden necesitar distintos subconjuntos de campos), mientras que Auth y Notification exponen operaciones más fijas y puntuales, para las que REST es suficiente.
 
@@ -100,7 +117,7 @@ Todos los contenedores se conectan a una red interna común (`tattoo-network`), 
 
 ## 10. Contrato de Microservicios
 
-El archivo `contrato-postman.json` contiene una Collection de Postman con los 12 endpoints del sistema, organizados por microservicio, probados y funcionando de extremo a extremo (incluyendo el flujo completo: registro, login, creación de artista, creación de cita con validación de disponibilidad, y notificación automática).
+El archivo `Practica4-SA-EstudioTatuajes.postman_collection.json` contiene una Collection de Postman con los 13 endpoints del sistema, organizados por microservicio, probados y funcionando de extremo a extremo (incluyendo el flujo completo: registro, login, creación de artista, creación de cita con validación de disponibilidad y horario, registro de anticipo, y notificación automática).
 
 ## 11. Principios SOLID aplicados
 
@@ -116,14 +133,68 @@ El archivo `contrato-postman.json` contiene una Collection de Postman con los 12
 P4/
 ├── README.md
 ├── docker-compose.yml
-├── contrato-postman.json
+├── .env.example
+├── Practica4-SA-EstudioTatuajes.postman_collection.json
 ├── Imagenes/
 │   ├── arquitectura.png
 │   ├── despliegue.png
 │   └── er.png
+│
 ├── api-gateway/
+│   ├── Dockerfile
+│   ├── package.json
+│   └── src/
+│       ├── index.js
+│       └── middleware/
+│           └── requireAuth.js
+│
 ├── auth-service/
+│   ├── Dockerfile
+│   ├── package.json
+│   └── src/
+│       ├── index.js
+│       ├── db.js
+│       ├── models/
+│       │   └── User.js
+│       ├── utils/
+│       │   ├── crypto.js
+│       │   └── jwt.js
+│       ├── middleware/
+│       │   └── authMiddleware.js
+│       └── routes/
+│           └── authRoutes.js
+│
 ├── artists-service/
+│   ├── Dockerfile
+│   ├── requirements.txt
+│   └── app/
+│       ├── __init__.py
+│       ├── main.py
+│       ├── database.py
+│       ├── models.py
+│       └── schema.py
+│
 ├── appointments-service/
+│   ├── Dockerfile
+│   ├── package.json
+│   └── src/
+│       ├── index.js
+│       ├── db.js
+│       ├── models/
+│       │   └── Appointment.js
+│       ├── schema/
+│       │   └── typeDefs.js
+│       └── resolvers/
+│           └── resolvers.js
+│
 └── notification-service/
+    ├── Dockerfile
+    ├── package.json
+    └── src/
+        ├── index.js
+        ├── db.js
+        ├── models/
+        │   └── Notification.js
+        └── routes/
+            └── notificationRoutes.js
 ```
