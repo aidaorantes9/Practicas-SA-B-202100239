@@ -1,18 +1,18 @@
-# imagen base de node, version liviana
 FROM node:20-alpine
 
-# carpeta de trabajo dentro del contenedor
 WORKDIR /app
 
-# copio  primero el package json para aprovechar el cache de docker
 COPY package.json .
 RUN npm install
 
-# copio el resto del codigo
 COPY src ./src
 
-# puerto en el que corre este servicio
+# le damos la propiedad de los archivos al usuario node (uid 1000)
+# esto es necesario porque el contenedor corre con runAsNonRoot en kubernetes
+RUN chown -R node:node /app
+
+USER node
+
 EXPOSE 4000
 
-# comando que arranca el servicio
 CMD ["npm", "start"]

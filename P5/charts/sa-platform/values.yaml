@@ -1,0 +1,32 @@
+postgresql:
+  enabled: true
+  image:
+    repository: bitnamilegacy/postgresql
+  auth:
+    username: "app_user"
+    database: "auth_db"
+  primary:
+    initdb:
+      scripts:
+        01-create-databases.sql: |
+          CREATE DATABASE artists_db;
+          CREATE DATABASE appointments_db;
+          CREATE DATABASE notification_db;
+          CREATE DATABASE cronjobs_db;
+          GRANT ALL PRIVILEGES ON DATABASE artists_db TO "app_user";
+          GRANT ALL PRIVILEGES ON DATABASE appointments_db TO "app_user";
+          GRANT ALL PRIVILEGES ON DATABASE notification_db TO "app_user";
+          GRANT ALL PRIVILEGES ON DATABASE cronjobs_db TO "app_user";
+    persistence:
+      enabled: true
+      size: 1Gi
+
+rabbitmq:
+  enabled: true
+  image:
+    repository: bitnamilegacy/rabbitmq
+  auth:
+    username: "app_user"
+  persistence:
+    enabled: true
+    size: 1Gi

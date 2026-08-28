@@ -1,0 +1,9 @@
+{
+  "name": "cronjobs",
+  "version": "1.0.0",
+  "description": "cronjobs de la practica 5, insercion de ejecucion y resumen por hora",
+  "dependencies": {
+    "pg": "^8.12.0",
+    "amqplib": "^0.10.4"
+  }
+}

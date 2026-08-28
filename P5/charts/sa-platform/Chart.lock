@@ -1,0 +1,24 @@
+dependencies:
+- name: postgresql
+  repository: https://charts.bitnami.com/bitnami
+  version: 15.5.20
+- name: rabbitmq
+  repository: https://charts.bitnami.com/bitnami
+  version: 14.6.5
+- name: auth-service
+  repository: file://charts/auth-service
+  version: 0.1.0
+- name: artists-service
+  repository: file://charts/artists-service
+  version: 0.1.0
+- name: appointments-service
+  repository: file://charts/appointments-service
+  version: 0.1.0
+- name: notification-service
+  repository: file://charts/notification-service
+  version: 0.1.0
+- name: api-gateway
+  repository: file://charts/api-gateway
+  version: 0.1.0
+digest: sha256:77b4cc66f0bd9574a6bcf70136f25a809136f3086ad46d34764f6b408fb4d08f
+generated: "2026-08-28T10:00:03.75968182-06:00"

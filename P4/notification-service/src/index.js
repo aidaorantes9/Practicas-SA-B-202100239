@@ -4,6 +4,7 @@ const express = require("express");
 const cors = require("cors");
 
 const { initDb } = require("./db");
+const { startConsumer } = require("./rabbitmq");
 const notificationRoutes = require("./routes/notificationRoutes");
 
 const app = express();
@@ -22,6 +23,10 @@ initDb()
   .then(() => {
     app.listen(PORT, () => {
       console.log(`notification-service corriendo en el puerto ${PORT}`);
+    });
+    // el consumidor arranca aparte, no bloquea que el servidor http empiece a responder
+    startConsumer().catch((error) => {
+      console.error("notification-service: error en el consumidor", error.message);
     });
   })
   .catch((error) => {

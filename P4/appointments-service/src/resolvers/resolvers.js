@@ -2,9 +2,9 @@
 // esta es la logica de negocio real del microservicio de citas
 
 const Appointment = require("../models/Appointment");
+const { publishAppointmentCreated } = require("../rabbitmq");
 
 const ARTISTS_SERVICE_URL = process.env.ARTISTS_SERVICE_URL;
-const NOTIFICATION_SERVICE_URL = process.env.NOTIFICATION_SERVICE_URL;
 
 // llamada directa a artists-service, sin pasar por el api gateway
 // esto es la conexion que dibujamos en el diagrama de arquitectura
@@ -13,43 +13,6 @@ async function checkArtistAvailability(artistId) {
   const response = await fetch(url);
   const data = await response.json();
   return data;
-}
-
-// llamada directa a notification-service, tambien sin pasar por el gateway
-// avisa que una cita nueva quedo agendada
-async function notifyAppointmentCreated(appointment) {
-  const url = `${NOTIFICATION_SERVICE_URL}/api/notifications`;
-
-  // armamos la fecha en un formato mas facil de leer
-  const fecha = new Date(appointment.date);
-  const fechaLegible = fecha.toLocaleDateString("es-GT", {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
-  const horaLegible = fecha.toLocaleTimeString("es-GT", {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-
-  const mensaje = `Tu cita quedo confirmada para el ${fechaLegible} a las ${horaLegible}. Zona: ${appointment.body_part}${appointment.design ? `, diseno: ${appointment.design}` : ""}.`;
-
-  try {
-    await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        appointmentId: appointment.id,
-        clientId: appointment.client_id,
-        message: mensaje,
-      }),
-    });
-  } catch (error) {
-    // si notification-service falla, la cita ya quedo creada de todas formas
-    // solo dejamos un registro en consola, no rompemos el flujo principal
-    console.log("appointments-service: no se pudo notificar", error.message);
-  }
 }
 
 // convierte una fila de la base de datos al formato que espera graphql
@@ -122,8 +85,10 @@ const root = {
       durationMinutes: args.durationMinutes,
     });
 
-    // paso 3: avisamos directo a notification-service
-    await notifyAppointmentCreated(nuevaCita);
+    // paso 3: publicamos el evento a rabbitmq, no esperamos a que se procese
+    // esto es lo que hace el flujo asincrono, appointments-service no se bloquea
+    // esperando a que notification-service termine de armar y enviar el correo
+    publishAppointmentCreated(nuevaCita);
 
     return toGraphqlType(nuevaCita);
   },

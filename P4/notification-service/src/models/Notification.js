@@ -20,4 +20,16 @@ async function findByClientId(clientId) {
   return result.rows;
 }
 
-module.exports = { createNotification, findByClientId };
+// guarda el resumen que publica el cronjob 2
+// se guarda el objeto completo como texto json, junto con cuando se genero
+async function saveCronSummary(resumen) {
+  const query = `
+    INSERT INTO cron_summaries (generado_en, resumen_json)
+    VALUES ($1, $2)
+    RETURNING *;
+  `;
+  const result = await pool.query(query, [resumen.generadoEn, JSON.stringify(resumen)]);
+  return result.rows[0];
+}
+
+module.exports = { createNotification, findByClientId, saveCronSummary };

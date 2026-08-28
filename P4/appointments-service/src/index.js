@@ -7,6 +7,7 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 
 const { initDb } = require("./db");
+const { connectRabbitMQ } = require("./rabbitmq");
 const schema = require("./schema/typeDefs");
 const rootValue = require("./resolvers/resolvers");
 
@@ -32,7 +33,7 @@ app.use(
   }))
 );
 
-initDb()
+Promise.all([initDb(), connectRabbitMQ()])
   .then(() => {
     app.listen(PORT, () => {
       console.log(`appointments-service corriendo en el puerto ${PORT}`);

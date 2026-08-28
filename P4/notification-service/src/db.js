@@ -21,6 +21,13 @@ async function initDb() {
       status VARCHAR(50) NOT NULL DEFAULT 'enviado',
       created_at TIMESTAMP DEFAULT NOW()
     );
+
+    CREATE TABLE IF NOT EXISTS cron_summaries (
+      id SERIAL PRIMARY KEY,
+      generado_en TIMESTAMP NOT NULL,
+      resumen_json TEXT NOT NULL,
+      created_at TIMESTAMP DEFAULT NOW()
+    );
   `;
 
   let intentos = 0;

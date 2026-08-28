@@ -1,0 +1,90 @@
+# cronjob 1: cada 2 minutos inserta un registro con la fecha de ejecucion
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ .Release.Name }}-cron-insert-execution
+  namespace: {{ .Release.Namespace }}
+spec:
+  schedule: "*/2 * * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      template:
+        spec:
+          restartPolicy: Never
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+          containers:
+            - name: insert-execution
+              image: "cronjobs:1.0"
+              imagePullPolicy: IfNotPresent
+              command: ["node", "src/insert-execution.js"]
+              securityContext:
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+                capabilities:
+                  drop:
+                    - ALL
+              envFrom:
+                - configMapRef:
+                    name: {{ .Release.Name }}-app-config
+                - secretRef:
+                    name: {{ .Release.Name }}-app-secrets
+              env:
+                - name: STUDENT_CARNET
+                  value: "202100239"
+              volumeMounts:
+                - name: tmp
+                  mountPath: /tmp
+          volumes:
+            - name: tmp
+              emptyDir:
+                medium: Memory
+---
+# cronjob 2: cada 10 minutos calcula el resumen y lo publica en rabbitmq
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ .Release.Name }}-cron-summarize-publish
+  namespace: {{ .Release.Namespace }}
+spec:
+  schedule: "*/10 * * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      template:
+        spec:
+          restartPolicy: Never
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 1000
+          containers:
+            - name: summarize-publish
+              image: "cronjobs:1.0"
+              imagePullPolicy: IfNotPresent
+              command: ["node", "src/summarize-and-publish.js"]
+              securityContext:
+                allowPrivilegeEscalation: false
+                readOnlyRootFilesystem: true
+                capabilities:
+                  drop:
+                    - ALL
+              envFrom:
+                - configMapRef:
+                    name: {{ .Release.Name }}-app-config
+                - secretRef:
+                    name: {{ .Release.Name }}-app-secrets
+              volumeMounts:
+                - name: tmp
+                  mountPath: /tmp
+          volumes:
+            - name: tmp
+              emptyDir:
+                medium: Memory

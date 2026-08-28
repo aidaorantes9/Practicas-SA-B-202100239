@@ -1,0 +1,13 @@
+postgresql:
+  auth:
+    postgresPassword: "CAMBIA_ESTA_CONTRASENA"
+    password: "CAMBIA_ESTA_CONTRASENA"
+
+rabbitmq:
+  auth:
+    password: "CAMBIA_ESTA_CONTRASENA"
+
+secrets:
+  jwtSecret: "CAMBIA_ESTE_SECRETO"
+  aesSecretKey: "CAMBIA_ESTA_LLAVE_DE_32_CARACTERES"
+  hmacSecretKey: "CAMBIA_ESTE_SECRETO"

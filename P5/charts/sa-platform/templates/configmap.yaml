@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-app-config
+  namespace: {{ .Release.Namespace }}
+data:
+{{ include "sa-platform.configmapData" . | indent 2 }}
