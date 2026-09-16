@@ -148,6 +148,10 @@ jobs:
         if: always()
         run: kubectl get pods -o wide
 
+      - name: Logs del controlador de Argo Rollouts (diagnostico)
+        if: always()
+        run: kubectl logs -l app.kubernetes.io/name=argo-rollouts --tail=50 || true
+
       - name: Smoke test - api-gateway responde
         run: |
           kubectl port-forward svc/sa-p7-api-gateway 3000:3000 &
