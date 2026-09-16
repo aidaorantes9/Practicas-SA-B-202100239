@@ -4,12 +4,16 @@
   "description": "microservicio de notificaciones, practica 4",
   "main": "src/index.js",
   "scripts": {
-    "start": "node src/index.js"
+    "start": "node src/index.js",
+    "test": "jest"
   },
   "dependencies": {
     "amqplib": "^0.10.4",
     "express": "^4.19.2",
     "pg": "^8.12.0",
     "cors": "^2.8.5"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
   }
 }
