@@ -160,6 +160,16 @@ jobs:
         if: always()
         run: kubectl logs -n argo-rollouts -l app.kubernetes.io/name=argo-rollouts --tail=50 || true
 
+      - name: Diagnostico extra - eventos y estado de Rollouts
+        if: always()
+        run: |
+          echo "=== kubectl get rs -A ==="
+          kubectl get rs -A
+          echo "=== kubectl get events --sort-by=.lastTimestamp ==="
+          kubectl get events --sort-by=.lastTimestamp | tail -30
+          echo "=== kubectl get rollout sa-p7-auth-service -o yaml ==="
+          kubectl get rollout sa-p7-auth-service -o yaml
+
       - name: Smoke test - api-gateway responde
         run: |
           kubectl port-forward svc/sa-p7-api-gateway 3000:3000 &
