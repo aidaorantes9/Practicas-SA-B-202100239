@@ -90,6 +90,10 @@ jobs:
         with:
           cluster_name: sa-p7-cluster
 
+      - name: Instalar CRDs de Argo Rollouts (necesarios para el chart)
+        run: |
+          kubectl apply -f https://github.com/argoproj/argo-rollouts/releases/latest/download/install.yaml --server-side
+
       - name: Crear secret para descargar imagenes privadas de GHCR
         run: |
           kubectl create secret docker-registry ghcr-pull-secret \
