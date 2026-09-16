@@ -97,10 +97,6 @@ jobs:
             --docker-username=${{ github.actor }} \
             --docker-password=${{ secrets.GITHUB_TOKEN }}
 
-      - name: Actualizar dependencias del chart
-        working-directory: P5/charts/sa-platform
-        run: helm dependency build
-
       - name: Instalar la plataforma con Helm
         working-directory: P5/charts/sa-platform
         run: |
