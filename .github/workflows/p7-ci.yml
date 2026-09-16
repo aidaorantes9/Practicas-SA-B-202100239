@@ -92,7 +92,7 @@ jobs:
 
       - name: Instalar CRDs de Argo Rollouts (necesarios para el chart)
         run: |
-          kubectl apply -f https://github.com/argoproj/argo-rollouts/releases/latest/download/install.yaml --server-side
+          kubectl create namespace argo-rollouts && kubectl apply -n argo-rollouts -f https://github.com/argoproj/argo-rollouts/releases/latest/download/install.yaml --server-side
 
       - name: Crear secret para descargar imagenes privadas de GHCR
         run: |
