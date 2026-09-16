@@ -1,21 +1,16 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
 metadata:
-  name: {{ include "api-gateway.fullname" . }}
+  name: {{ include "auth-service.fullname" . }}
   labels:
-    {{- include "api-gateway.labels" . | nindent 4 }}
+    {{- include "auth-service.labels" . | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
-  strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxUnavailable: 0
-      maxSurge: 1
   selector:
     matchLabels:
-      {{- include "api-gateway.selectorLabels" . | nindent 6 }}
+      {{- include "auth-service.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       annotations:
@@ -24,7 +19,7 @@ spec:
         {{- toYaml . | nindent 8 }}
         {{- end }}
       labels:
-        {{- include "api-gateway.labels" . | nindent 8 }}
+        {{- include "auth-service.labels" . | nindent 8 }}
         {{- with .Values.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
@@ -33,7 +28,7 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "api-gateway.serviceAccountName" . }}
+      serviceAccountName: {{ include "auth-service.serviceAccountName" . }}
       {{- with .Values.podSecurityContext }}
       securityContext:
         {{- toYaml . | nindent 8 }}
@@ -54,6 +49,8 @@ spec:
           env:
             - name: PORT
               value: {{ .Values.service.port | quote }}
+            - name: DB_NAME
+              value: {{ .Values.dbName | default "auth_db" | quote }}
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}
@@ -95,3 +92,17 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+  strategy:
+    canary:
+      steps:
+        - setWeight: 20
+        - pause: {}
+        - analysis:
+            templates:
+              - templateName: {{ include "auth-service.fullname" . }}-smoke-test
+        - setWeight: 50
+        - pause: {}
+        - analysis:
+            templates:
+              - templateName: {{ include "auth-service.fullname" . }}-smoke-test
+        - setWeight: 100

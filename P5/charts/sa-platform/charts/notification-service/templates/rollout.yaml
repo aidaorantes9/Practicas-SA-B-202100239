@@ -1,5 +1,5 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
 metadata:
   name: {{ include "notification-service.fullname" . }}
   labels:
@@ -8,11 +8,6 @@ spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
-  strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxUnavailable: 0
-      maxSurge: 1
   selector:
     matchLabels:
       {{- include "notification-service.selectorLabels" . | nindent 6 }}
@@ -97,3 +92,17 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+  strategy:
+    canary:
+      steps:
+        - setWeight: 20
+        - pause: {}
+        - analysis:
+            templates:
+              - templateName: {{ include "notification-service.fullname" . }}-smoke-test
+        - setWeight: 50
+        - pause: {}
+        - analysis:
+            templates:
+              - templateName: {{ include "notification-service.fullname" . }}-smoke-test
+        - setWeight: 100

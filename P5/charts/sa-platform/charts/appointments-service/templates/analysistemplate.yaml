@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: {{ include "appointments-service.fullname" . }}-smoke-test
+spec:
+  metrics:
+    - name: smoke-test-health
+      count: 1
+      provider:
+        job:
+          spec:
+            backoffLimit: 0
+            template:
+              spec:
+                restartPolicy: Never
+                containers:
+                  - name: smoke-test
+                    image: curlimages/curl:8.10.1
+                    command:
+                      - sh
+                      - -c
+                      - |
+                        for i in 1 2 3 4 5; do
+                          curl -sf http://{{ include "appointments-service.fullname" . }}:{{ .Values.service.port }}/health || exit 1
+                          sleep 2
+                        done

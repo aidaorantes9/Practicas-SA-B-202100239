@@ -1,21 +1,16 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
 metadata:
-  name: {{ include "artists-service.fullname" . }}
+  name: {{ include "appointments-service.fullname" . }}
   labels:
-    {{- include "artists-service.labels" . | nindent 4 }}
+    {{- include "appointments-service.labels" . | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
-  strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxUnavailable: 0
-      maxSurge: 1
   selector:
     matchLabels:
-      {{- include "artists-service.selectorLabels" . | nindent 6 }}
+      {{- include "appointments-service.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       annotations:
@@ -24,7 +19,7 @@ spec:
         {{- toYaml . | nindent 8 }}
         {{- end }}
       labels:
-        {{- include "artists-service.labels" . | nindent 8 }}
+        {{- include "appointments-service.labels" . | nindent 8 }}
         {{- with .Values.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
@@ -33,7 +28,7 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "artists-service.serviceAccountName" . }}
+      serviceAccountName: {{ include "appointments-service.serviceAccountName" . }}
       {{- with .Values.podSecurityContext }}
       securityContext:
         {{- toYaml . | nindent 8 }}
@@ -55,7 +50,7 @@ spec:
             - name: PORT
               value: {{ .Values.service.port | quote }}
             - name: DB_NAME
-              value: {{ .Values.dbName | default "artists_db" | quote }}
+              value: {{ .Values.dbName | default "appointments_db" | quote }}
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}
@@ -97,3 +92,17 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+  strategy:
+    canary:
+      steps:
+        - setWeight: 20
+        - pause: {}
+        - analysis:
+            templates:
+              - templateName: {{ include "appointments-service.fullname" . }}-smoke-test
+        - setWeight: 50
+        - pause: {}
+        - analysis:
+            templates:
+              - templateName: {{ include "appointments-service.fullname" . }}-smoke-test
+        - setWeight: 100
