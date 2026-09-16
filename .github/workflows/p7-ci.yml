@@ -144,13 +144,21 @@ jobs:
             --set api-gateway.replicaCount=1 \
             --wait --timeout 6m
 
+      - name: Esperar a que los Rollouts esten Healthy
+        working-directory: P5/charts/sa-platform
+        run: |
+          for SERVICIO in auth-service artists-service appointments-service notification-service api-gateway; do
+            echo "Esperando sa-p7-$SERVICIO..."
+            kubectl wait --for=jsonpath="{.status.phase}"=Healthy rollout/sa-p7-$SERVICIO --timeout=180s
+          done
+
       - name: Mostrar estado de pods (diagnostico)
         if: always()
         run: kubectl get pods -o wide
 
       - name: Logs del controlador de Argo Rollouts (diagnostico)
         if: always()
-        run: kubectl logs -l app.kubernetes.io/name=argo-rollouts --tail=50 || true
+        run: kubectl logs -n argo-rollouts -l app.kubernetes.io/name=argo-rollouts --tail=50 || true
 
       - name: Smoke test - api-gateway responde
         run: |
