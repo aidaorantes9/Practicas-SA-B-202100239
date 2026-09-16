@@ -19,4 +19,11 @@ npm-debug.log*
 Thumbs.db
 
 # Vite
-**/.vite/P5/charts/sa-platform/values-secrets.yaml
+**/.vite/
+P5/charts/sa-platform/values-secrets.yaml
+
+# Terraform (P8)
+P8/terraform/.terraform/
+P8/terraform/terraform.tfstate
+P8/terraform/terraform.tfstate.backup
+P8/terraform/*.tfplan
