@@ -19,19 +19,24 @@ dependencies:
   - name: auth-service
     version: "0.1.0"
     repository: "file://charts/auth-service"
+    condition: auth-service.enabled
 
   - name: artists-service
     version: "0.1.0"
     repository: "file://charts/artists-service"
+    condition: artists-service.enabled
 
   - name: appointments-service
     version: "0.1.0"
     repository: "file://charts/appointments-service"
+    condition: appointments-service.enabled
 
   - name: notification-service
     version: "0.1.0"
     repository: "file://charts/notification-service"
+    condition: notification-service.enabled
 
   - name: api-gateway
     version: "0.1.0"
     repository: "file://charts/api-gateway"
+    condition: api-gateway.enabled
