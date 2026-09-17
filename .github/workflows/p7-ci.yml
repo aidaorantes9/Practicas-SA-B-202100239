@@ -94,6 +94,12 @@ jobs:
         run: |
           kubectl create namespace argo-rollouts && kubectl apply -n argo-rollouts -f https://github.com/argoproj/argo-rollouts/releases/latest/download/install.yaml --server-side
 
+      - name: Crear ServiceAccounts para los microservicios (Terraform los crea en P8, aqui se crean a mano)
+        run: |
+          for SERVICIO in auth-service artists-service appointments-service notification-service api-gateway; do
+            kubectl create serviceaccount $SERVICIO --dry-run=client -o yaml | kubectl apply -f -
+          done
+
       - name: Crear secret para descargar imagenes privadas de GHCR
         run: |
           kubectl create secret docker-registry ghcr-pull-secret \
