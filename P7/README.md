@@ -1,3 +1,5 @@
+> **Nota importante:** el archivo original del workflow vivía en `.github/workflows/p7-ci.yml` y se movió a [`workflow-p7-referencia.yml`](workflow-p7-referencia.yml) en esta misma carpeta. La razón es que la Práctica 8 exige que **ningún workflow** en el repositorio ejecute despliegue directo (`kubectl apply`, `helm install`, etc.) — y el pipeline de P7 sí lo hace intencionalmente, porque así lo exige su propio enunciado (despliegue automático con `kind`). Mantener ambos enunciados satisfechos simultáneamente solo es posible si el workflow de P7 deja de ejecutarse automáticamente una vez que ya fue calificado. La evidencia de su ejecución exitosa (sección 4 de este README) permanece intacta en el historial de GitHub Actions, independientemente de si el archivo YAML sigue en `.github/workflows/` o no.
+
 # Práctica 7 — Integración y Despliegue Continuo (CI/CD)
 
 Pipeline de CI/CD para la plataforma de microservicios del estudio de tatuajes (Práctica 4), implementado con GitHub Actions.
@@ -6,7 +8,7 @@ Pipeline de CI/CD para la plataforma de microservicios del estudio de tatuajes (
 
 El pipeline se dispara automáticamente con cada `push` a la rama `main` y ejecuta 4 etapas: pruebas automatizadas, construcción y publicación de imágenes Docker, y despliegue automático en un clúster de Kubernetes efímero, con verificación de funcionamiento al final.
 
-Archivo del workflow: [`.github/workflows/p7-ci.yml`](../.github/workflows/p7-ci.yml)
+Archivo del workflow (ver nota arriba): [`workflow-p7-referencia.yml`](workflow-p7-referencia.yml)
 
 ## 2. Diagrama del pipeline
 
