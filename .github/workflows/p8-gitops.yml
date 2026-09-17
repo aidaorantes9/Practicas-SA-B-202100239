@@ -1,0 +1,155 @@
+name: P8 - GitOps Pipeline
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_PREFIX: sa-practica
+  GITOPS_REPO: aidaorantes9/P8_GITOPS_202100239
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [auth-service, appointments-service, notification-service, api-gateway]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Instalar dependencias
+        working-directory: P4/${{ matrix.service }}
+        run: npm install
+      - name: Ejecutar pruebas
+        working-directory: P4/${{ matrix.service }}
+        run: npm test
+
+  build-and-test-artists:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Instalar dependencias
+        working-directory: P4/artists-service
+        run: |
+          pip install -r requirements.txt
+          pip install -r requirements-dev.txt
+      - name: Ejecutar pruebas
+        working-directory: P4/artists-service
+        run: python -m pytest tests/ -v
+
+  helm-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Instalar Helm
+        uses: azure/setup-helm@v4
+      - name: helm lint del chart completo, incluyendo subcharts
+        working-directory: P5/charts/sa-platform
+        run: helm lint --with-subcharts .
+
+  docker-build-push-sign:
+    needs: [build-and-test, build-and-test-artists, helm-lint]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    strategy:
+      matrix:
+        service: [auth-service, appointments-service, notification-service, api-gateway, artists-service]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Obtener version desde el tag de git
+        id: version
+        run: echo "version=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
+
+      - name: Autenticarse en GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Construir imagen (sin publicar todavia, para escanearla primero)
+        uses: docker/build-push-action@v6
+        with:
+          context: P4/${{ matrix.service }}
+          push: false
+          load: true
+          tags: ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_PREFIX }}-${{ matrix.service }}:${{ steps.version.outputs.version }}
+
+      - name: Escanear con Trivy, bloquear si hay CVE critica
+        uses: aquasecurity/trivy-action@0.24.0
+        with:
+          image-ref: ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_PREFIX }}-${{ matrix.service }}:${{ steps.version.outputs.version }}
+          exit-code: '1'
+          severity: 'CRITICAL'
+          format: 'table'
+
+      - name: Publicar imagen en GHCR (ya escaneada)
+        uses: docker/build-push-action@v6
+        with:
+          context: P4/${{ matrix.service }}
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_PREFIX }}-${{ matrix.service }}:${{ steps.version.outputs.version }}
+
+      - name: Instalar Cosign
+        uses: sigstore/cosign-installer@v3
+
+      - name: Firmar la imagen (keyless, identidad de GitHub Actions)
+        run: |
+          cosign sign --yes \
+            ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_PREFIX }}-${{ matrix.service }}:${{ steps.version.outputs.version }}
+
+      - name: Generar SBOM
+        uses: anchore/sbom-action@v0
+        with:
+          image: ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_PREFIX }}-${{ matrix.service }}:${{ steps.version.outputs.version }}
+          format: spdx-json
+          output-file: sbom-${{ matrix.service }}.spdx.json
+
+      - name: Guardar SBOM como artefacto
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom-${{ matrix.service }}
+          path: sbom-${{ matrix.service }}.spdx.json
+
+  pull-request-gitops:
+    needs: docker-build-push-sign
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clonar repositorio GitOps
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.GITOPS_REPO }}
+          token: ${{ secrets.GITOPS_PAT }}
+          path: gitops
+
+      - name: Obtener version desde el tag de git
+        id: version
+        run: echo "version=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
+
+      - name: Actualizar el tag de imagen en los values de produccion
+        working-directory: gitops
+        run: |
+          for SERVICIO in auth-service artists-service appointments-service notification-service api-gateway; do
+            sed -i "s|tag: \".*\"|tag: \"${{ steps.version.outputs.version }}\"|" apps/$SERVICIO/values-production.yaml
+          done
+
+      - name: Crear Pull Request en el repositorio GitOps
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITOPS_PAT }}
+          path: gitops
+          branch: bump-version-${{ steps.version.outputs.version }}
+          title: "Actualizar imagenes a ${{ steps.version.outputs.version }}"
+          commit-message: "Actualizo el tag de las imagenes a ${{ steps.version.outputs.version }}"
+          body: "Pull request automatico generado por el pipeline de CI/CD (P8). Version: ${{ steps.version.outputs.version }}"
