@@ -14,7 +14,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: {{ include "sa-platform.configmapData" . | sha256sum }}
+        checksum/config: {{ .Values.sharedConfigMapName | default (printf "%s-app-config" .Release.Name) | sha256sum }}
         {{- with .Values.podAnnotations }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
@@ -43,9 +43,9 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           envFrom:
             - configMapRef:
-                name: {{ .Release.Name }}-app-config
+                name: {{ .Values.sharedConfigMapName | default (printf "%s-app-config" .Release.Name) }}
             - secretRef:
-                name: {{ .Release.Name }}-app-secrets
+                name: {{ .Values.sharedSecretName | default (printf "%s-app-secrets" .Release.Name) }}
           env:
             - name: PORT
               value: {{ .Values.service.port | quote }}
