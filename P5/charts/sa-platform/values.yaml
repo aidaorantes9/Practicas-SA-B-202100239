@@ -30,3 +30,8 @@ rabbitmq:
   persistence:
     enabled: true
     size: 1Gi
+# controla si este chart crea su propio Secret de la app
+# en P8 esto se desactiva porque el Secret real lo crea un SealedSecret
+# aplicado por ArgoCD desde el repositorio GitOps
+secrets:
+  manageInChart: true
