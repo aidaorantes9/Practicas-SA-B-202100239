@@ -58,10 +58,6 @@ Tres políticas obligatorias activas en el clúster, gestionadas vía ArgoCD des
 
 Ver [`incidente.md`](incidente.md).
 
-## 10. Preguntas teóricas
-
-Se responderán en vivo durante la calificación, según lo indicado en el foro del curso.
-
 ## Diagrama del flujo GitOps
 
 ![Diagrama del flujo GitOps](docs/diagrama-flujo-gitops.png)
@@ -78,4 +74,4 @@ Se responderán en vivo durante la calificación, según lo indicado en el foro 
 | Bloqueo por vulnerabilidad crítica | Corregido en los tags `v0.1.2`, `v0.1.3` y `v0.1.4`, ver historial de [Actions](https://github.com/aidaorantes9/Practicas-SA-B-202100239/actions/workflows/p8-gitops.yml) |
 | Imagen firmada | `ghcr.io/aidaorantes9/sa-practica-auth-service:v0.1.5` |
 | Reporte de prueba de carga | No aplica — el auxiliar indicó en el foro del curso que esta sección queda anulada para P8 |
-| Video demostrativo | *(pendiente)* |
+| Video demostrativo | https://drive.google.com/drive/folders/1mUooPvAoX-iW_HNugKlVhRjbObBHF5vU?usp=sharing |
