@@ -18,11 +18,13 @@ spec:
                 restartPolicy: Never
                 securityContext:
                   runAsNonRoot: true
+                  runAsUser: 100
                 containers:
                   - name: smoke-test
                     image: curlimages/curl:8.10.1
                     securityContext:
                       runAsNonRoot: true
+                      runAsUser: 100
                     resources:
                       requests:
                         cpu: 50m
