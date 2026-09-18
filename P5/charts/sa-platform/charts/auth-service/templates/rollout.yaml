@@ -96,12 +96,10 @@ spec:
     canary:
       steps:
         - setWeight: 20
-        - pause: {}
         - analysis:
             templates:
               - templateName: {{ include "auth-service.fullname" . }}-smoke-test
         - setWeight: 50
-        - pause: {}
         - analysis:
             templates:
               - templateName: {{ include "auth-service.fullname" . }}-smoke-test
