@@ -1,5 +1,9 @@
 FROM python:3.12-slim
 
+# actualizo los paquetes del sistema para corregir vulnerabilidades conocidas
+# de la imagen base (ej. perl-base, perl-archive-tar)
+RUN apt-get update && apt-get upgrade -y && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 
 COPY requirements.txt .
