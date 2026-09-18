@@ -26,7 +26,7 @@ El chart de la Práctica 5 ([`P5/charts/sa-platform/`](../P5/charts/sa-platform/
 
 10 `Application` (uno por servicio y ambiente) más `Application` de infraestructura compartida, gestión de secretos, y políticas de Kyverno, todos en [`P8_GITOPS_202100239/argocd/`](https://github.com/aidaorantes9/P8_GITOPS_202100239/tree/main/argocd).
 
-![Estado de las Applications en ArgoCD](docs/Evidencia.png)
+![Estado de las Applications en ArgoCD](docs/evidencia-argocd.png)
 
 ## 5. Pipeline CI/CD ([`p8-gitops.yml`](../.github/workflows/p8-gitops.yml))
 
