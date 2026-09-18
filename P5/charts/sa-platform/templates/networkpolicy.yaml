@@ -139,4 +139,40 @@ spec:
                   - notification-service
       ports:
         - protocol: TCP
-          port: 5672
+          port: 5672---
+# permite que los Jobs de smoke test (AnalysisTemplate de Argo Rollouts)
+# lleguen a los 5 microservicios durante la promocion canary
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ .Release.Name }}-allow-smoke-test-to-services
+  namespace: {{ .Release.Namespace }}
+spec:
+  podSelector:
+    matchExpressions:
+      - key: app.kubernetes.io/name
+        operator: In
+        values:
+          - auth-service
+          - artists-service
+          - appointments-service
+          - notification-service
+          - api-gateway
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              role: smoke-test
+      ports:
+        - protocol: TCP
+          port: 4000
+        - protocol: TCP
+          port: 4001
+        - protocol: TCP
+          port: 4002
+        - protocol: TCP
+          port: 4003
+        - protocol: TCP
+          port: 3000
