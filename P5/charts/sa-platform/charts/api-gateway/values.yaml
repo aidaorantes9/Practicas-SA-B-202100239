@@ -121,7 +121,7 @@ livenessProbe:
   httpGet:
     path: /health
     port: http
-  initialDelaySeconds: 10
+  initialDelaySeconds: 30
   periodSeconds: 10
 
 # la readiness revisa si el servicio ya puede recibir trafico
@@ -130,8 +130,8 @@ readinessProbe:
   httpGet:
     path: /health
     port: http
-  initialDelaySeconds: 5
-  periodSeconds: 5
+  initialDelaySeconds: 20
+  periodSeconds: 15
 
 # la startup le da tiempo al contenedor de terminar de arrancar antes de que
 # las otras dos probes empiecen a evaluarlo
