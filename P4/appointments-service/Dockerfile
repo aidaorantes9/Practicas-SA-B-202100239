@@ -1,7 +1,7 @@
 FROM node:20-alpine
 
 # actualizo npm para corregir vulnerabilidades conocidas en su copia interna de tar
-RUN npm install -g npm@latest
+RUN npm install -g npm@11
 
 WORKDIR /app
 
