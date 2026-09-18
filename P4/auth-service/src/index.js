@@ -16,7 +16,7 @@ app.use(cors({ origin: true, credentials: true }));
 
 // endpoint simple para saber si el servicio esta vivo
 app.get("/health", (req, res) => {
-  res.status(200).json({ status: "ok", service: "auth-service" });
+  res.status(500).json({ status: "error", service: "auth-service" }); // FALLO INDUCIDO para demostrar la reversion automatica de P8
 });
 
 app.use("/api/auth", authRoutes);
