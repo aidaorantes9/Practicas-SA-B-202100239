@@ -27,3 +27,7 @@ P8/terraform/.terraform/
 P8/terraform/terraform.tfstate
 P8/terraform/terraform.tfstate.backup
 P8/terraform/*.tfplan
+
+# Videos
+**/*.mkv
+**/*.mp4
