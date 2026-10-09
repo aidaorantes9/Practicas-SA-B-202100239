@@ -1,0 +1,18 @@
+# Aplicacion raiz (app-of-apps): levanta todo lo declarado en argocd/ del repo GitOps
+applications:
+  root-app:
+    namespace: argocd
+    project: default
+    source:
+      repoURL: https://github.com/aidaorantes9/P8_GITOPS_202100239.git
+      targetRevision: main
+      path: argocd
+      directory:
+        exclude: "*-staging.yaml"
+    destination:
+      server: https://kubernetes.default.svc
+      namespace: argocd
+    syncPolicy:
+      automated:
+        prune: true
+        selfHeal: true
