@@ -31,3 +31,11 @@ P8/terraform/*.tfplan
 # Videos
 **/*.mkv
 **/*.mp4
+
+# Terraform (P9) - el estado vive en GCS
+**/.terraform/
+**/*.tfstate
+**/*.tfstate.*
+**/*.tfplan
+**/*.tfvars
+**/credentials*.json
