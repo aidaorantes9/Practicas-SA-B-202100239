@@ -1,3 +1,4 @@
+{{- if .Values.cronjobs.enabled }}
 # cronjob 1: cada 2 minutos inserta un registro con la fecha de ejecucion
 apiVersion: batch/v1
 kind: CronJob
@@ -20,7 +21,7 @@ spec:
             runAsUser: 1000
           containers:
             - name: insert-execution
-              image: "cronjobs:1.0"
+              image: {{ .Values.cronjobs.image | quote }}
               imagePullPolicy: IfNotPresent
               command: ["node", "src/insert-execution.js"]
               securityContext:
@@ -67,7 +68,7 @@ spec:
             runAsUser: 1000
           containers:
             - name: summarize-publish
-              image: "cronjobs:1.0"
+              image: {{ .Values.cronjobs.image | quote }}
               imagePullPolicy: IfNotPresent
               command: ["node", "src/summarize-and-publish.js"]
               securityContext:
@@ -88,3 +89,4 @@ spec:
             - name: tmp
               emptyDir:
                 medium: Memory
+{{- end }}

@@ -42,3 +42,8 @@ rabbitmq:
 # aplicado por ArgoCD desde el repositorio GitOps
 secrets:
   manageInChart: true
+
+# cronjobs: insert-execution (cada 2 min) es el generador de datos para medir el RPO en P9
+cronjobs:
+  enabled: true
+  image: ghcr.io/aidaorantes9/sa-practica-cronjobs:1.0.0
