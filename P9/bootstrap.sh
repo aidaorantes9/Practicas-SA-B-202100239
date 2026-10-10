@@ -7,6 +7,7 @@ LOG_DIR="$RAIZ/evidencias/bootstrap"; mkdir -p "$LOG_DIR"
 LOG="$LOG_DIR/bootstrap-$(TZ=America/Guatemala date +%Y%m%d-%H%M%S).log"
 export KUBECONFIG="$HOME/.kube/kind-sa-p9.yaml"
 marca() { echo "[$(TZ=America/Guatemala date '+%Y-%m-%d %H:%M:%S')] $*" | tee -a "$LOG"; }
+trap 'marca "ERROR en la linea $LINENO, ultimas lineas del log:"; tail -n 15 "$LOG"' ERR
 T0=$(date +%s)
 
 marca "INICIO bootstrap"

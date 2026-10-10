@@ -4,8 +4,8 @@
 set -euo pipefail
 CACHE_DIR="$HOME/p9-cache"
 docker network inspect kind >/dev/null 2>&1 || docker network create kind >/dev/null
-declare -A REMOTO=( [dockerio]="https://registry-1.docker.io" [ghcrio]="https://ghcr.io" [quayio]="https://quay.io" [registryk8sio]="https://registry.k8s.io" )
-declare -A HOST=(   [dockerio]="docker.io" [ghcrio]="ghcr.io" [quayio]="quay.io" [registryk8sio]="registry.k8s.io" )
+declare -A REMOTO=( [dockerio]="https://registry-1.docker.io" [ghcrio]="https://ghcr.io" [quayio]="https://quay.io" [registryk8sio]="https://registry.k8s.io" [regkyvernoio]="https://reg.kyverno.io" )
+declare -A HOST=(   [dockerio]="docker.io" [ghcrio]="ghcr.io" [quayio]="quay.io" [registryk8sio]="registry.k8s.io" [regkyvernoio]="reg.kyverno.io" )
 for n in "${!REMOTO[@]}"; do
   c="kind-cache-$n"
   mkdir -p "$CACHE_DIR/data/$n" "$CACHE_DIR/certs.d/${HOST[$n]}"
