@@ -1,0 +1,14 @@
+{{- if .Values.podDisruptionBudget.enabled }}
+# garantiza que el drenaje de un nodo nunca deje al servicio sin replicas disponibles
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "api-gateway.fullname" . }}
+  labels:
+    {{- include "api-gateway.labels" . | nindent 4 }}
+spec:
+  minAvailable: {{ .Values.podDisruptionBudget.minAvailable }}
+  selector:
+    matchLabels:
+      {{- include "api-gateway.selectorLabels" . | nindent 6 }}
+{{- end }}

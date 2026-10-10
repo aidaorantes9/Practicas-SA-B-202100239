@@ -179,3 +179,8 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+# P9: se activa en production junto con replicaCount >= 2
+podDisruptionBudget:
+  enabled: false
+  minAvailable: 1
