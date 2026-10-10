@@ -25,5 +25,6 @@ resource "helm_release" "root_app" {
     kubernetes_resource_quota.quota,
     kubernetes_limit_range.limits,
     kubernetes_role_binding.enlace,
+    kubernetes_annotations.sc_local,
   ]
 }
