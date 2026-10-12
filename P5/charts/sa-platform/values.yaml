@@ -6,6 +6,9 @@ postgresql:
     username: "app_user"
     database: "auth_db"
   primary:
+    # P9: Velero respalda SOLO este volumen (opt-in); es el unico dato irrecuperable
+    podAnnotations:
+      backup.velero.io/backup-volumes: data
     initdb:
       scripts:
         01-create-databases.sql: |
@@ -22,6 +25,9 @@ postgresql:
       size: 1Gi
 
 rabbitmq:
+  # P9: Velero respalda SOLO el volumen de datos (opt-in)
+  podAnnotations:
+    backup.velero.io/backup-volumes: data
   enabled: true
   image:
     repository: bitnamilegacy/rabbitmq
