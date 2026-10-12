@@ -1,0 +1,22 @@
+[2026-10-12 14:48:18] INICIO prueba de restauracion de datos
+[2026-10-12 14:48:18] Respaldo a usar: velero-production-cada-15min-20261012204525 (iniciado 2026-10-12 14:45:25 hora local)
+[2026-10-12 14:48:19] ANTES: 25 filas en cron_executions; ultima: 89,2026-10-12 14:48:03.339
+[2026-10-12 14:48:22] DESASTRE: DROP TABLE cron_executions
+[2026-10-12 14:48:23] Verificado: la tabla ya no existe
+[2026-10-12 14:48:23] RECUPERACION: pauso la sincronizacion automatica de ArgoCD (root-app e infra-production)
+[2026-10-12 14:48:23] Elimino el StatefulSet y el volumen de PostgreSQL para restaurarlos desde el respaldo
+[2026-10-12 14:48:26] Velero restaura PostgreSQL desde velero-production-cada-15min-20261012204525 (restore restore-pg-20261012-144818)
+Restore request "restore-pg-20261012-144818" submitted successfully.
+Waiting for restore to complete. You may safely press ctrl-c to stop waiting - your restore will continue in the background.
+.............................................................................
+Restore completed with status: Completed. You may check for more information using the commands `velero restore describe restore-pg-20261012-144818` and `velero restore logs restore-pg-20261012-144818`.
+[2026-10-12 14:49:43] Estado del restore: Completed
+[2026-10-12 14:49:56] PostgreSQL restaurado y listo
+[2026-10-12 14:49:56] Reactivo la sincronizacion automatica de ArgoCD
+[2026-10-12 14:49:59] CONTENIDO VERIFICADO: las 23 filas restauradas son IDENTICAS (id y hora) a las primeras 23 de antes del desastre
+[2026-10-12 14:49:59] Ultima fila restaurada: 2026-10-12 14:44:04.551
+[2026-10-12 14:49:59] Filas perdidas: 2 (escritas despues del respaldo): 14:46:03 14:48:03 
+[2026-10-12 14:49:59] RPO MEDIDO (desastre - ultimo dato recuperado): 4 min 15 s
+[2026-10-12 14:49:59] Antiguedad del respaldo al momento del desastre: 2 min 54 s
+[2026-10-12 14:49:59] Tiempo de restauracion de datos (desastre -> PostgreSQL listo): 1 min 37 s
+[2026-10-12 14:49:59] FIN. Evidencia: /media/sf_compartida/SA/Practicas_SA_B_202100239/P9/evidencias/restauracion/restauracion-20261012-144818.log, /media/sf_compartida/SA/Practicas_SA_B_202100239/P9/evidencias/restauracion/filas-antes-20261012-144818.csv, /media/sf_compartida/SA/Practicas_SA_B_202100239/P9/evidencias/restauracion/filas-despues-20261012-144818.csv
