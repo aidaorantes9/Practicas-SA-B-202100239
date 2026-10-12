@@ -1,0 +1,89 @@
+[2026-10-12 14:12:36] INICIO prueba de drenaje del nodo sa-p9-worker
+[2026-10-12 14:13:01] Sonda lista en el control-plane; 20 s de linea base
+[2026-10-12 14:13:22] Estado ANTES del drenaje:
+  api-gateway-production-544d5778f5-htj87              Running    sa-p9-worker2
+  api-gateway-production-544d5778f5-rsfkl              Running    sa-p9-worker
+  appointments-service-production-5dcfbfcd9f-g952g     Running    sa-p9-worker
+  appointments-service-production-5dcfbfcd9f-vqjqq     Running    2d17h
+  artists-service-production-556ffb4d55-vvtgq          Running    sa-p9-worker2
+  artists-service-production-556ffb4d55-x98kz          Running    sa-p9-worker
+  auth-service-production-766b955b44-s8m7s             Running    sa-p9-worker2
+  auth-service-production-766b955b44-wgftv             Running    sa-p9-worker
+  notification-service-production-668c5c57c-dfxp6      Running    sa-p9-worker
+  notification-service-production-668c5c57c-pzsn9      Running    sa-p9-worker2
+  sa-p8-postgresql-0                                   Running    sa-p9-worker2
+  sa-p8-rabbitmq-0                                     Running    sa-p9-worker
+[2026-10-12 14:13:24] DRAIN de sa-p9-worker: inicia
+node/sa-p9-worker cordoned
+Warning: ignoring DaemonSet-managed Pods: calico-system/calico-node-4mjtr, calico-system/csi-node-driver-dsp7n, kube-system/kube-proxy-h6g4b, velero/node-agent-mcj5w
+evicting pod velero/velero-5f8c56fb-gb5xr
+evicting pod argocd/argocd-applicationset-controller-5c54874456-88lfl
+evicting pod argocd/argocd-redis-56799cdff9-t7m5d
+evicting pod argocd/argocd-repo-server-f9c6fb7c4-tw9pm
+evicting pod argocd/argocd-server-799f7b9948-vs5hm
+evicting pod calico-system/calico-typha-7b687d88c8-h6d2z
+evicting pod kyverno/kyverno-reports-controller-6854cd5bdb-7fqgt
+evicting pod production/07bb4071-1286-4e58-b093-86673aac38b6.smoke-test-health.1-fcj96
+evicting pod production/1d9f4260-86b3-4e64-9ffa-fba911cefc14.smoke-test-health.1-7klwh
+evicting pod production/44bc778d-100e-45ee-80bb-9eaccf427fbd.smoke-test-health.1-q6xz6
+evicting pod production/e09a7d1d-69ec-4944-a408-2e0832d5d54b.smoke-test-health.1-ffb5g
+evicting pod production/api-gateway-production-544d5778f5-rsfkl
+evicting pod production/appointments-service-production-5dcfbfcd9f-g952g
+evicting pod production/artists-service-production-556ffb4d55-x98kz
+evicting pod production/auth-service-production-766b955b44-wgftv
+evicting pod production/efaa74d0-71e6-4568-b57c-823330e41145.smoke-test-health.1-bhwzd
+evicting pod argocd/argocd-application-controller-0
+evicting pod production/notification-service-production-668c5c57c-dfxp6
+evicting pod tigera-operator/tigera-operator-6f6897fdc5-wmmbg
+evicting pod velero/production-default-kopia-maintain-job-1791834894625-lbzwp
+evicting pod production/51ba0277-6a55-4875-b715-b3924b5882e6.smoke-test-health.1-8r2dv
+evicting pod production/sa-p8-rabbitmq-0
+I1012 14:13:31.686500  149176 request.go:754] "Waited before sending request" delay="1.197734114s" reason="client-side throttling, not priority and fairness" verb="POST" URL="https://127.0.0.1:42591/api/v1/namespaces/production/pods/efaa74d0-71e6-4568-b57c-823330e41145.smoke-test-health.1-bhwzd/eviction"
+pod/1d9f4260-86b3-4e64-9ffa-fba911cefc14.smoke-test-health.1-7klwh evicted
+pod/07bb4071-1286-4e58-b093-86673aac38b6.smoke-test-health.1-fcj96 evicted
+pod/e09a7d1d-69ec-4944-a408-2e0832d5d54b.smoke-test-health.1-ffb5g evicted
+pod/44bc778d-100e-45ee-80bb-9eaccf427fbd.smoke-test-health.1-q6xz6 evicted
+pod/efaa74d0-71e6-4568-b57c-823330e41145.smoke-test-health.1-bhwzd evicted
+pod/production-default-kopia-maintain-job-1791834894625-lbzwp evicted
+pod/51ba0277-6a55-4875-b715-b3924b5882e6.smoke-test-health.1-8r2dv evicted
+I1012 14:14:00.054763  149176 request.go:754] "Waited before sending request" delay="1.053069057s" reason="client-side throttling, not priority and fairness" verb="GET" URL="https://127.0.0.1:42591/api/v1/namespaces/argocd/pods/argocd-application-controller-0"
+I1012 14:14:10.254859  149176 request.go:754] "Waited before sending request" delay="2.932947121s" reason="client-side throttling, not priority and fairness" verb="GET" URL="https://127.0.0.1:42591/api/v1/namespaces/kyverno/pods/kyverno-reports-controller-6854cd5bdb-7fqgt"
+pod/velero-5f8c56fb-gb5xr evicted
+pod/tigera-operator-6f6897fdc5-wmmbg evicted
+pod/argocd-applicationset-controller-5c54874456-88lfl evicted
+pod/calico-typha-7b687d88c8-h6d2z evicted
+pod/argocd-server-799f7b9948-vs5hm evicted
+pod/appointments-service-production-5dcfbfcd9f-g952g evicted
+pod/auth-service-production-766b955b44-wgftv evicted
+pod/notification-service-production-668c5c57c-dfxp6 evicted
+pod/api-gateway-production-544d5778f5-rsfkl evicted
+pod/argocd-repo-server-f9c6fb7c4-tw9pm evicted
+pod/artists-service-production-556ffb4d55-x98kz evicted
+pod/argocd-redis-56799cdff9-t7m5d evicted
+pod/argocd-application-controller-0 evicted
+pod/kyverno-reports-controller-6854cd5bdb-7fqgt evicted
+pod/sa-p8-rabbitmq-0 evicted
+node/sa-p9-worker drained
+[2026-10-12 14:14:46] DRAIN de sa-p9-worker: completado; se observa 60 s con el nodo fuera de servicio
+[2026-10-12 14:15:46] Estado DURANTE (nodo sa-p9-worker cordoned):
+  api-gateway-production-544d5778f5-24k6s              Running    sa-p9-worker2
+  api-gateway-production-544d5778f5-htj87              Running    sa-p9-worker2
+  appointments-service-production-5dcfbfcd9f-29rj2     Running    108s
+  appointments-service-production-5dcfbfcd9f-vqjqq     Running    2d17h
+  artists-service-production-556ffb4d55-spxg5          Running    sa-p9-worker2
+  artists-service-production-556ffb4d55-vvtgq          Running    sa-p9-worker2
+  auth-service-production-766b955b44-jwspk             Running    sa-p9-worker2
+  auth-service-production-766b955b44-s8m7s             Running    sa-p9-worker2
+  notification-service-production-668c5c57c-pzsn9      Running    sa-p9-worker2
+  notification-service-production-668c5c57c-v6zmd      Running    sa-p9-worker2
+  sa-p8-postgresql-0                                   Running    sa-p9-worker2
+  sa-p8-rabbitmq-0                                     Pending    <none>
+node/sa-p9-worker uncordoned
+[2026-10-12 14:15:47] UNCORDON de sa-p9-worker; 30 s finales de observacion
+[2026-10-12 14:16:18] RESUMEN: 79 consultas por servicio (1 por segundo)
+[2026-10-12 14:16:18]   api: 0 respuestas distintas de 200
+[2026-10-12 14:16:18]   auth: 1 respuestas distintas de 200
+[2026-10-12 14:16:18]   artists: 0 respuestas distintas de 200
+[2026-10-12 14:16:18]   appointments: 2 respuestas distintas de 200
+[2026-10-12 14:16:18]   notification: 1 respuestas distintas de 200
+[2026-10-12 14:16:18] FIN. Detalle segundo a segundo: /media/sf_compartida/SA/Practicas_SA_B_202100239/P9/evidencias/drenaje/sonda-sa-p9-worker-20261012-141236.log

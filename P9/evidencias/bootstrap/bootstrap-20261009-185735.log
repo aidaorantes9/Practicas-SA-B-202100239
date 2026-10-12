@@ -1,0 +1,131 @@
+[2026-10-09 18:57:35] INICIO bootstrap
+[2026-10-09 18:57:35] Fase 0: cache de imagenes
+kind-cache-dockerio	Up 24 hours
+kind-cache-registryk8sio	Up 24 hours
+kind-cache-ghcrio	Up 24 hours
+kind-cache-quayio	Up 24 hours
+[0m[1mInitializing the backend...[0m
+
+[0m[1mInitializing provider plugins...[0m
+- terraform.io/builtin/terraform is built in to Terraform
+- Reusing previous version of hashicorp/google from the dependency lock file
+- Reusing previous version of hashicorp/kubernetes from the dependency lock file
+- Reusing previous version of hashicorp/helm from the dependency lock file
+- Reusing previous version of tehcyx/kind from the dependency lock file
+- Using previously-installed hashicorp/google v7.46.1
+- Using previously-installed hashicorp/kubernetes v2.38.0
+- Using previously-installed hashicorp/helm v2.17.0
+- Using previously-installed tehcyx/kind v0.11.0
+
+[0m[1m[32mTerraform has been successfully initialized![0m[32m[0m
+[0m[32m
+You may now begin working with Terraform. Try running "terraform plan" to see
+any changes that are required for your infrastructure. All Terraform commands
+should now work.
+
+If you ever set or change modules or backend configuration for Terraform,
+rerun this command to reinitialize your working directory. If you forget, other
+commands will detect it and remind you to do so if necessary.[0m
+[2026-10-09 18:58:43] Fase 1: Terraform crea el cluster kind (3 nodos)
+[0m[1mkind_cluster.this: Refreshing state... [id=sa-p9-kindest/node:v1.31.0][0m
+
+[0m[1m[32mNo changes.[0m[1m Your infrastructure matches the configuration.[0m
+
+[0mTerraform has compared your real infrastructure against your configuration
+and found no differences, so no changes are needed.
+[33m╷[0m[0m
+[33m│[0m [0m[1m[33mWarning: [0m[0m[1mResource targeting is in effect[0m
+[33m│[0m [0m
+[33m│[0m [0m[0mYou are creating a plan with the -target option, which means that the
+[33m│[0m [0mresult of this plan may not represent all of the changes requested by the
+[33m│[0m [0mcurrent configuration.
+[33m│[0m [0m
+[33m│[0m [0mThe -target option is not for routine use, and is provided only for
+[33m│[0m [0mexceptional situations such as recovering from errors or mistakes, or when
+[33m│[0m [0mTerraform specifically suggests to use it as part of an error message.
+[33m╵[0m[0m
+[33m╷[0m[0m
+[33m│[0m [0m[1m[33mWarning: [0m[0m[1mApplied changes may be incomplete[0m
+[33m│[0m [0m
+[33m│[0m [0m[0mThe plan was created with the -target option in effect, so some changes
+[33m│[0m [0mrequested in the configuration may have been ignored and the output values
+[33m│[0m [0mmay not be fully updated. Run the following command to verify that no other
+[33m│[0m [0mchanges are pending:
+[33m│[0m [0m    terraform plan
+[33m│[0m [0m
+[33m│[0m [0mNote that the -target option is not suitable for routine use, and is
+[33m│[0m [0mprovided only for exceptional situations such as recovering from errors or
+[33m│[0m [0mmistakes, or when Terraform specifically suggests to use it as part of an
+[33m│[0m [0merror message.
+[33m╵[0m[0m
+[0m[1m[32m
+Apply complete! Resources: 0 added, 0 changed, 0 destroyed.[0m
+[0m[1m[32m
+Outputs:
+
+[0mkubeconfig_path = "/home/alejandra/.kube/kind-sa-p9.yaml"
+[2026-10-09 18:59:24] Fase 2: Terraform instala Calico, llaves, base P8, ArgoCD y la app raiz
+[0m[1mkind_cluster.this: Refreshing state... [id=sa-p9-kindest/node:v1.31.0][0m
+[0m[1mdata.google_secret_manager_secret_version.ss_key: Reading...[0m[0m
+[0m[1mdata.google_secret_manager_secret_version.velero: Reading...[0m[0m
+[0m[1mdata.google_secret_manager_secret_version.ss_crt: Reading...[0m[0m
+[0m[1mdata.google_secret_manager_secret_version.ss_key: Read complete after 1s [id=projects/621894352414/secrets/sealed-secrets-tls-key/versions/1][0m
+[0m[1mdata.google_secret_manager_secret_version.ss_crt: Read complete after 1s [id=projects/621894352414/secrets/sealed-secrets-tls-crt/versions/1][0m
+[0m[1mdata.google_secret_manager_secret_version.velero: Read complete after 1s [id=projects/621894352414/secrets/velero-gcp-credentials/versions/1][0m
+[0m[1mhelm_release.calico: Refreshing state... [id=calico][0m
+[0m[1mkubernetes_namespace.velero: Refreshing state... [id=velero][0m
+[0m[1mkubernetes_namespace.ambiente["production"]: Refreshing state... [id=production][0m
+[0m[1mkubernetes_secret.sealed_secrets_key: Refreshing state... [id=kube-system/sealed-secrets-key-restaurada][0m
+[0m[1mkubernetes_namespace.ambiente["staging"]: Refreshing state... [id=staging][0m
+[0m[1mkubernetes_role.rol["production-notification-service"]: Refreshing state... [id=production/notification-service-role][0m
+[0m[1mkubernetes_role.rol["staging-auth-service"]: Refreshing state... [id=staging/auth-service-role][0m
+[0m[1mkubernetes_role.rol["production-api-gateway"]: Refreshing state... [id=production/api-gateway-role][0m
+[0m[1mkubernetes_limit_range.limits["production"]: Refreshing state... [id=production/sa-p8-limits][0m
+[0m[1mkubernetes_role.rol["staging-appointments-service"]: Refreshing state... [id=staging/appointments-service-role][0m
+[0m[1mkubernetes_role.rol["staging-api-gateway"]: Refreshing state... [id=staging/api-gateway-role][0m
+[0m[1mkubernetes_limit_range.limits["staging"]: Refreshing state... [id=staging/sa-p8-limits][0m
+[0m[1mkubernetes_role.rol["production-auth-service"]: Refreshing state... [id=production/auth-service-role][0m
+[0m[1mkubernetes_role.rol["production-artists-service"]: Refreshing state... [id=production/artists-service-role][0m
+[0m[1mkubernetes_role.rol["staging-notification-service"]: Refreshing state... [id=staging/notification-service-role][0m
+[0m[1mkubernetes_role.rol["staging-artists-service"]: Refreshing state... [id=staging/artists-service-role][0m
+[0m[1mkubernetes_service_account.sa["production-api-gateway"]: Refreshing state... [id=production/api-gateway][0m
+[0m[1mkubernetes_role.rol["production-appointments-service"]: Refreshing state... [id=production/appointments-service-role][0m
+[0m[1mkubernetes_service_account.sa["production-auth-service"]: Refreshing state... [id=production/auth-service][0m
+[0m[1mkubernetes_service_account.sa["staging-appointments-service"]: Refreshing state... [id=staging/appointments-service][0m
+[0m[1mkubernetes_service_account.sa["production-artists-service"]: Refreshing state... [id=production/artists-service][0m
+[0m[1mkubernetes_service_account.sa["staging-api-gateway"]: Refreshing state... [id=staging/api-gateway][0m
+[0m[1mkubernetes_service_account.sa["production-appointments-service"]: Refreshing state... [id=production/appointments-service][0m
+[0m[1mkubernetes_service_account.sa["production-notification-service"]: Refreshing state... [id=production/notification-service][0m
+[0m[1mkubernetes_service_account.sa["staging-artists-service"]: Refreshing state... [id=staging/artists-service][0m
+[0m[1mkubernetes_service_account.sa["staging-auth-service"]: Refreshing state... [id=staging/auth-service][0m
+[0m[1mkubernetes_service_account.sa["staging-notification-service"]: Refreshing state... [id=staging/notification-service][0m
+[0m[1mkubernetes_resource_quota.quota["staging"]: Refreshing state... [id=staging/sa-p8-quota][0m
+[0m[1mkubernetes_resource_quota.quota["production"]: Refreshing state... [id=production/sa-p8-quota][0m
+[0m[1mkubernetes_secret.velero_credentials: Refreshing state... [id=velero/velero-gcp-credentials][0m
+[0m[1mkubernetes_role_binding.enlace["staging-auth-service"]: Refreshing state... [id=staging/auth-service-rolebinding][0m
+[0m[1mkubernetes_role_binding.enlace["production-artists-service"]: Refreshing state... [id=production/artists-service-rolebinding][0m
+[0m[1mkubernetes_role_binding.enlace["staging-appointments-service"]: Refreshing state... [id=staging/appointments-service-rolebinding][0m
+[0m[1mkubernetes_role_binding.enlace["staging-artists-service"]: Refreshing state... [id=staging/artists-service-rolebinding][0m
+[0m[1mkubernetes_role_binding.enlace["production-auth-service"]: Refreshing state... [id=production/auth-service-rolebinding][0m
+[0m[1mkubernetes_role_binding.enlace["production-api-gateway"]: Refreshing state... [id=production/api-gateway-rolebinding][0m
+[0m[1mkubernetes_role_binding.enlace["staging-notification-service"]: Refreshing state... [id=staging/notification-service-rolebinding][0m
+[0m[1mkubernetes_role_binding.enlace["production-appointments-service"]: Refreshing state... [id=production/appointments-service-rolebinding][0m
+[0m[1mkubernetes_role_binding.enlace["production-notification-service"]: Refreshing state... [id=production/notification-service-rolebinding][0m
+[0m[1mkubernetes_role_binding.enlace["staging-api-gateway"]: Refreshing state... [id=staging/api-gateway-rolebinding][0m
+[0m[1mterraform_data.nodos_listos: Refreshing state... [id=d510c3f0-6bf6-d4e7-55ea-278a2eafe555][0m
+[0m[1mhelm_release.argocd: Refreshing state... [id=argocd][0m
+[0m[1mhelm_release.root_app: Refreshing state... [id=root-app][0m
+
+Interrupt received.
+Please wait for Terraform to exit or data loss may occur.
+Gracefully shutting down...
+
+
+Two interrupts received. Exiting immediately. Note that data loss may have
+occurred.
+
+[31m╷[0m[0m
+[31m│[0m [0m[1m[31mError: [0m[0m[1moperation canceled[0m
+[31m│[0m [0m
+[31m│[0m [0m[0m
+[31m╵[0m[0m

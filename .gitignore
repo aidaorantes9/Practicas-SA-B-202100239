@@ -39,3 +39,6 @@ P8/terraform/*.tfplan
 **/*.tfplan
 **/*.tfvars
 **/credentials*.json
+
+# P9: los logs de evidencia SI se versionan (los enlaza el README de entrega)
+!P9/evidencias/**/*.log
