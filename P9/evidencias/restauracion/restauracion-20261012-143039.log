@@ -1,0 +1,19 @@
+[2026-10-12 14:30:39] INICIO prueba de restauracion de datos
+[2026-10-12 14:30:41] Respaldo a usar: velero-production-cada-15min-20261012201525 (iniciado 2026-10-12 14:15:25 hora local)
+[2026-10-12 14:30:43] ANTES: 28 filas en cron_executions; ultima: 60,2026-10-12 14:30:04.936
+[2026-10-12 14:30:45] DESASTRE: DROP TABLE cron_executions
+[2026-10-12 14:30:46] Verificado: la tabla ya no existe
+[2026-10-12 14:30:46] RECUPERACION: pauso la sincronizacion automatica de ArgoCD (root-app e infra-production)
+[2026-10-12 14:30:47] Elimino el StatefulSet y el volumen de PostgreSQL para restaurarlos desde el respaldo
+[2026-10-12 14:31:21] Velero restaura PostgreSQL desde velero-production-cada-15min-20261012201525 (restore restore-pg-20261012-143039)
+Restore request "restore-pg-20261012-143039" submitted successfully.
+Waiting for restore to complete. You may safely press ctrl-c to stop waiting - your restore will continue in the background.
+........
+Restore completed with status: Completed. You may check for more information using the commands `velero restore describe restore-pg-20261012-143039` and `velero restore logs restore-pg-20261012-143039`.
+[2026-10-12 14:31:30] Estado del restore: Completed
+[2026-10-12 14:35:57] ERROR en la linea 58. ArgoCD puede haber quedado en pausa a proposito; reactivarlo con: kubectl patch application root-app -n argocd --type merge -p {"spec":{"syncPolicy":{"automated":{"prune":true,"selfHeal":true}}}}
+[2026-10-12 14:35] INTENTO 1 ABORTADO: el PVC restaurado conservo spec.volumeName del PV eliminado y quedo Pending.
+Causa: el restore no incluia 'persistentvolumes'; sin ese paso Velero no limpia volumeName para reaprovisionar.
+[2026-10-12 14:37] Recuperacion manual: restore-pg-manual-1437 con --include-resources statefulsets,pods,persistentvolumeclaims,persistentvolumes -> Completed
+[2026-10-12 14:41] Verificacion: 20 de 28 filas restauradas, IDENTICAS; ultima restaurada 14:14:31; 8 filas perdidas (14:16-14:30).
+[2026-10-12 14:41] Perdida de datos medida: 16 min 14 s (desastre 14:30:45 - ultima fila 14:14:31). ArgoCD reactivado.
