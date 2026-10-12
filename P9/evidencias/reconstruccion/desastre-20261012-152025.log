@@ -1,0 +1,25 @@
+[2026-10-12 15:20:25] Estado ANTES del desastre:
+NAME                  STATUS   ROLES           AGE     VERSION
+sa-p9-control-plane   Ready    control-plane   3d20h   v1.31.0
+sa-p9-worker          Ready    <none>          3d20h   v1.31.0
+sa-p9-worker2         Ready    <none>          3d20h   v1.31.0
+  api-gateway-production Synced Healthy
+  appointments-service-production Synced Healthy
+  argo-rollouts Synced Healthy
+  artists-service-production Synced Healthy
+  auth-service-production Synced Healthy
+  infra-production Synced Healthy
+  kyverno Synced Healthy
+  kyverno-policies Synced Healthy
+  notification-service-production Synced Healthy
+  root-app Synced Healthy
+  sealed-secrets Synced Healthy
+  secrets-production Synced Healthy
+  velero Synced Healthy
+[2026-10-12 15:20:26] DESASTRE: se eliminan los 3 nodos del cluster (perdida total, incluidos los volumenes)
+Deleting cluster "sa-p9" ...
+Deleted nodes: ["sa-p9-control-plane" "sa-p9-worker2" "sa-p9-worker"]
+[2026-10-12 15:20:56] Verificacion:
+[2026-10-12 15:20:57]   ningun nodo sa-p9 existe
+E1012 15:20:57.573376  233685 memcache.go:381] "Couldn't get current server API group list" err="Get \"http://localhost:8080/api?timeout=32s\": dial tcp 127.0.0.1:8080: connect: connection refused"
+[2026-10-12 15:20:57] CLUSTER DESTRUIDO. Inicio del cronometro del RTO. Recuperar con: ./P9/bootstrap.sh

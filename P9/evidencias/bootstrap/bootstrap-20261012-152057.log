@@ -1,0 +1,1467 @@
+[2026-10-12 15:20:57] INICIO bootstrap
+[2026-10-12 15:20:57] Cluster nuevo (no existia al iniciar): si
+[2026-10-12 15:20:57] Fase 0: cache de imagenes
+kind-cache-regkyvernoio	Up 2 days
+kind-cache-dockerio	Up 2 days
+kind-cache-registryk8sio	Up 2 days
+kind-cache-ghcrio	Up 2 days
+kind-cache-quayio	Up 2 days
+[0m[1mInitializing the backend...[0m
+
+[0m[1mInitializing provider plugins...[0m
+- terraform.io/builtin/terraform is built in to Terraform
+- Reusing previous version of hashicorp/kubernetes from the dependency lock file
+- Reusing previous version of hashicorp/helm from the dependency lock file
+- Reusing previous version of tehcyx/kind from the dependency lock file
+- Reusing previous version of hashicorp/google from the dependency lock file
+- Using previously-installed tehcyx/kind v0.11.0
+- Using previously-installed hashicorp/google v7.46.1
+- Using previously-installed hashicorp/kubernetes v2.38.0
+- Using previously-installed hashicorp/helm v2.17.0
+
+[0m[1m[32mTerraform has been successfully initialized![0m[32m[0m
+[0m[32m
+You may now begin working with Terraform. Try running "terraform plan" to see
+any changes that are required for your infrastructure. All Terraform commands
+should now work.
+
+If you ever set or change modules or backend configuration for Terraform,
+rerun this command to reinitialize your working directory. If you forget, other
+commands will detect it and remind you to do so if necessary.[0m
+[2026-10-12 15:21:11] Cluster ausente pero registrado en el estado remoto: se reconcilia
+Removed kind_cluster.this
+Successfully removed 1 resource instance(s).
+[2026-10-12 15:21:20] Fase 1: Terraform crea el cluster kind (3 nodos)
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  [32m+[0m create[0m
+
+Terraform will perform the following actions:
+
+[1m  # kind_cluster.this[0m will be created
+[0m  [32m+[0m[0m resource "kind_cluster" "this" {
+      [32m+[0m[0m client_certificate     = (known after apply)
+      [32m+[0m[0m client_key             = (known after apply)
+      [32m+[0m[0m cluster_ca_certificate = (known after apply)
+      [32m+[0m[0m completed              = (known after apply)
+      [32m+[0m[0m endpoint               = (known after apply)
+      [32m+[0m[0m id                     = (known after apply)
+      [32m+[0m[0m kubeconfig             = (known after apply)
+      [32m+[0m[0m kubeconfig_path        = "/home/alejandra/.kube/kind-sa-p9.yaml"
+      [32m+[0m[0m name                   = "sa-p9"
+      [32m+[0m[0m node_image             = "kindest/node:v1.31.0"
+      [32m+[0m[0m wait_for_ready         = false
+
+      [32m+[0m[0m kind_config {
+          [32m+[0m[0m api_version               = "kind.x-k8s.io/v1alpha4"
+          [32m+[0m[0m containerd_config_patches = [
+              [32m+[0m[0m <<-EOT
+                    [plugins."io.containerd.grpc.v1.cri".registry]
+                      config_path = "/etc/containerd/certs.d"
+                EOT,
+            ]
+          [32m+[0m[0m kind                      = "Cluster"
+
+          [32m+[0m[0m networking {
+              [32m+[0m[0m disable_default_cni = true
+              [32m+[0m[0m pod_subnet          = "192.168.0.0/16"
+            }
+
+          [32m+[0m[0m node {
+              [32m+[0m[0m role = "control-plane"
+
+              [32m+[0m[0m extra_mounts {
+                  [32m+[0m[0m container_path = "/etc/containerd/certs.d"
+                  [32m+[0m[0m host_path      = "/home/alejandra/p9-cache/certs.d"
+                }
+            }
+          [32m+[0m[0m node {
+              [32m+[0m[0m role = "worker"
+
+              [32m+[0m[0m extra_mounts {
+                  [32m+[0m[0m container_path = "/etc/containerd/certs.d"
+                  [32m+[0m[0m host_path      = "/home/alejandra/p9-cache/certs.d"
+                }
+            }
+          [32m+[0m[0m node {
+              [32m+[0m[0m role = "worker"
+
+              [32m+[0m[0m extra_mounts {
+                  [32m+[0m[0m container_path = "/etc/containerd/certs.d"
+                  [32m+[0m[0m host_path      = "/home/alejandra/p9-cache/certs.d"
+                }
+            }
+        }
+    }
+
+[1mPlan:[0m [0m1 to add, 0 to change, 0 to destroy.
+[0m[1mkind_cluster.this: Creating...[0m[0m
+[0m[1mkind_cluster.this: Still creating... [00m10s elapsed][0m[0m
+[0m[1mkind_cluster.this: Still creating... [00m20s elapsed][0m[0m
+[0m[1mkind_cluster.this: Still creating... [00m30s elapsed][0m[0m
+[0m[1mkind_cluster.this: Still creating... [00m40s elapsed][0m[0m
+[0m[1mkind_cluster.this: Still creating... [00m50s elapsed][0m[0m
+[0m[1mkind_cluster.this: Creation complete after 52s [id=sa-p9-kindest/node:v1.31.0][0m
+[33m╷[0m[0m
+[33m│[0m [0m[1m[33mWarning: [0m[0m[1mResource targeting is in effect[0m
+[33m│[0m [0m
+[33m│[0m [0m[0mYou are creating a plan with the -target option, which means that the
+[33m│[0m [0mresult of this plan may not represent all of the changes requested by the
+[33m│[0m [0mcurrent configuration.
+[33m│[0m [0m
+[33m│[0m [0mThe -target option is not for routine use, and is provided only for
+[33m│[0m [0mexceptional situations such as recovering from errors or mistakes, or when
+[33m│[0m [0mTerraform specifically suggests to use it as part of an error message.
+[33m╵[0m[0m
+[33m╷[0m[0m
+[33m│[0m [0m[1m[33mWarning: [0m[0m[1mApplied changes may be incomplete[0m
+[33m│[0m [0m
+[33m│[0m [0m[0mThe plan was created with the -target option in effect, so some changes
+[33m│[0m [0mrequested in the configuration may have been ignored and the output values
+[33m│[0m [0mmay not be fully updated. Run the following command to verify that no other
+[33m│[0m [0mchanges are pending:
+[33m│[0m [0m    terraform plan
+[33m│[0m [0m
+[33m│[0m [0mNote that the -target option is not suitable for routine use, and is
+[33m│[0m [0mprovided only for exceptional situations such as recovering from errors or
+[33m│[0m [0mmistakes, or when Terraform specifically suggests to use it as part of an
+[33m│[0m [0merror message.
+[33m╵[0m[0m
+[0m[1m[32m
+Apply complete! Resources: 1 added, 0 changed, 0 destroyed.[0m
+[0m[1m[32m
+Outputs:
+
+[0mkubeconfig_path = "/home/alejandra/.kube/kind-sa-p9.yaml"
+[2026-10-12 15:22:21] Fase 2: Terraform instala Calico, llaves, base P8, ArgoCD y la app raiz
+[0m[1mkind_cluster.this: Refreshing state... [id=sa-p9-kindest/node:v1.31.0][0m
+[0m[1mdata.google_secret_manager_secret_version.ss_crt: Reading...[0m[0m
+[0m[1mdata.google_secret_manager_secret_version.ss_key: Reading...[0m[0m
+[0m[1mdata.google_secret_manager_secret_version.velero: Reading...[0m[0m
+[0m[1mhelm_release.calico: Refreshing state... [id=calico][0m
+[0m[1mkubernetes_namespace.velero: Refreshing state... [id=velero][0m
+[0m[1mkubernetes_namespace.ambiente["production"]: Refreshing state... [id=production][0m
+[0m[1mkubernetes_namespace.ambiente["staging"]: Refreshing state... [id=staging][0m
+[0m[1mkubernetes_role.rol["production-artists-service"]: Refreshing state... [id=production/artists-service-role][0m
+[0m[1mkubernetes_role.rol["staging-api-gateway"]: Refreshing state... [id=staging/api-gateway-role][0m
+[0m[1mkubernetes_role.rol["production-notification-service"]: Refreshing state... [id=production/notification-service-role][0m
+[0m[1mkubernetes_role.rol["staging-notification-service"]: Refreshing state... [id=staging/notification-service-role][0m
+[0m[1mkubernetes_role.rol["production-api-gateway"]: Refreshing state... [id=production/api-gateway-role][0m
+[0m[1mkubernetes_role.rol["staging-artists-service"]: Refreshing state... [id=staging/artists-service-role][0m
+[0m[1mkubernetes_role.rol["staging-auth-service"]: Refreshing state... [id=staging/auth-service-role][0m
+[0m[1mkubernetes_role.rol["production-auth-service"]: Refreshing state... [id=production/auth-service-role][0m
+[0m[1mkubernetes_role.rol["staging-appointments-service"]: Refreshing state... [id=staging/appointments-service-role][0m
+[0m[1mkubernetes_role.rol["production-appointments-service"]: Refreshing state... [id=production/appointments-service-role][0m
+[0m[1mkubernetes_resource_quota.quota["production"]: Refreshing state... [id=production/sa-p8-quota][0m
+[0m[1mkubernetes_limit_range.limits["staging"]: Refreshing state... [id=staging/sa-p8-limits][0m
+[0m[1mkubernetes_resource_quota.quota["staging"]: Refreshing state... [id=staging/sa-p8-quota][0m
+[0m[1mkubernetes_limit_range.limits["production"]: Refreshing state... [id=production/sa-p8-limits][0m
+[0m[1mkubernetes_service_account.sa["staging-artists-service"]: Refreshing state... [id=staging/artists-service][0m
+[0m[1mkubernetes_service_account.sa["production-auth-service"]: Refreshing state... [id=production/auth-service][0m
+[0m[1mdata.google_secret_manager_secret_version.ss_key: Read complete after 1s [id=projects/621894352414/secrets/sealed-secrets-tls-key/versions/1][0m
+[0m[1mdata.google_secret_manager_secret_version.ss_crt: Read complete after 1s [id=projects/621894352414/secrets/sealed-secrets-tls-crt/versions/1][0m
+[0m[1mdata.google_secret_manager_secret_version.velero: Read complete after 1s [id=projects/621894352414/secrets/velero-gcp-credentials/versions/1][0m
+[0m[1mkubernetes_service_account.sa["production-artists-service"]: Refreshing state... [id=production/artists-service][0m
+[0m[1mkubernetes_service_account.sa["staging-auth-service"]: Refreshing state... [id=staging/auth-service][0m
+[0m[1mkubernetes_service_account.sa["staging-appointments-service"]: Refreshing state... [id=staging/appointments-service][0m
+[0m[1mkubernetes_service_account.sa["production-api-gateway"]: Refreshing state... [id=production/api-gateway][0m
+[0m[1mkubernetes_service_account.sa["staging-notification-service"]: Refreshing state... [id=staging/notification-service][0m
+[0m[1mkubernetes_service_account.sa["staging-api-gateway"]: Refreshing state... [id=staging/api-gateway][0m
+[0m[1mkubernetes_service_account.sa["production-appointments-service"]: Refreshing state... [id=production/appointments-service][0m
+[0m[1mkubernetes_service_account.sa["production-notification-service"]: Refreshing state... [id=production/notification-service][0m
+[0m[1mkubernetes_secret.velero_credentials: Refreshing state... [id=velero/velero-gcp-credentials][0m
+[0m[1mkubernetes_secret.sealed_secrets_key: Refreshing state... [id=kube-system/sealed-secrets-key-restaurada][0m
+[0m[1mkubernetes_role_binding.enlace["production-api-gateway"]: Refreshing state... [id=production/api-gateway-rolebinding][0m
+[0m[1mkubernetes_role_binding.enlace["staging-artists-service"]: Refreshing state... [id=staging/artists-service-rolebinding][0m
+[0m[1mkubernetes_role_binding.enlace["production-appointments-service"]: Refreshing state... [id=production/appointments-service-rolebinding][0m
+[0m[1mkubernetes_role_binding.enlace["staging-notification-service"]: Refreshing state... [id=staging/notification-service-rolebinding][0m
+[0m[1mkubernetes_role_binding.enlace["staging-appointments-service"]: Refreshing state... [id=staging/appointments-service-rolebinding][0m
+[0m[1mkubernetes_role_binding.enlace["production-notification-service"]: Refreshing state... [id=production/notification-service-rolebinding][0m
+[0m[1mkubernetes_role_binding.enlace["production-artists-service"]: Refreshing state... [id=production/artists-service-rolebinding][0m
+[0m[1mkubernetes_role_binding.enlace["staging-api-gateway"]: Refreshing state... [id=staging/api-gateway-rolebinding][0m
+[0m[1mkubernetes_role_binding.enlace["production-auth-service"]: Refreshing state... [id=production/auth-service-rolebinding][0m
+[0m[1mkubernetes_role_binding.enlace["staging-auth-service"]: Refreshing state... [id=staging/auth-service-rolebinding][0m
+[0m[1mterraform_data.nodos_listos: Refreshing state... [id=d510c3f0-6bf6-d4e7-55ea-278a2eafe555][0m
+[0m[1mkubernetes_annotations.sc_local: Refreshing state... [id=apiVersion=storage.k8s.io/v1,kind=StorageClass,name=standard][0m
+[0m[1mhelm_release.argocd: Refreshing state... [id=argocd][0m
+[0m[1mhelm_release.root_app: Refreshing state... [id=root-app][0m
+
+[1m[36mNote:[0m[1m Objects have changed outside of Terraform
+[0m
+Terraform detected the following changes made outside of Terraform since the
+last "terraform apply" which may have affected this plan:
+
+[1m  # kubernetes_namespace.velero[0m has been deleted
+[0m  [31m-[0m[0m resource "kubernetes_namespace" "velero" {
+        id                               = "velero"
+        [90m# (1 unchanged attribute hidden)[0m[0m
+
+      [31m-[0m[0m metadata {
+          [31m-[0m[0m name             = "velero" [90m-> null[0m[0m
+            [90m# (6 unchanged attributes hidden)[0m[0m
+        }
+    }
+
+
+Unless you have made equivalent changes to your configuration, or ignored the
+relevant attributes using ignore_changes, the following plan may include
+actions to undo or respond to these changes.
+[90m
+─────────────────────────────────────────────────────────────────────────────[0m
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  [32m+[0m create[0m
+  [33m~[0m update in-place[0m
+[31m-[0m/[32m+[0m destroy and then create replacement[0m
+
+Terraform will perform the following actions:
+
+[1m  # helm_release.argocd[0m will be created
+[0m  [32m+[0m[0m resource "helm_release" "argocd" {
+      [32m+[0m[0m atomic                     = false
+      [32m+[0m[0m chart                      = "argo-cd"
+      [32m+[0m[0m cleanup_on_fail            = false
+      [32m+[0m[0m create_namespace           = true
+      [32m+[0m[0m dependency_update          = false
+      [32m+[0m[0m disable_crd_hooks          = false
+      [32m+[0m[0m disable_openapi_validation = false
+      [32m+[0m[0m disable_webhooks           = false
+      [32m+[0m[0m force_update               = false
+      [32m+[0m[0m id                         = (known after apply)
+      [32m+[0m[0m lint                       = false
+      [32m+[0m[0m manifest                   = (known after apply)
+      [32m+[0m[0m max_history                = 0
+      [32m+[0m[0m metadata                   = (known after apply)
+      [32m+[0m[0m name                       = "argocd"
+      [32m+[0m[0m namespace                  = "argocd"
+      [32m+[0m[0m pass_credentials           = false
+      [32m+[0m[0m recreate_pods              = false
+      [32m+[0m[0m render_subchart_notes      = true
+      [32m+[0m[0m replace                    = false
+      [32m+[0m[0m repository                 = "https://argoproj.github.io/argo-helm"
+      [32m+[0m[0m reset_values               = false
+      [32m+[0m[0m reuse_values               = false
+      [32m+[0m[0m skip_crds                  = false
+      [32m+[0m[0m status                     = "deployed"
+      [32m+[0m[0m timeout                    = 900
+      [32m+[0m[0m values                     = [
+          [32m+[0m[0m <<-EOT
+                # ArgoCD minimo para el bootstrap de P9
+                dex:
+                  enabled: false
+                notifications:
+                  enabled: false
+                configs:
+                  params:
+                    server.insecure: true
+                  cm:
+                    timeout.reconciliation: 60s
+                    # sin esto, las sync-waves entre Applications no esperan a que la wave anterior este sana
+                    resource.customizations.health.argoproj.io_Application: |
+                      hs = {}
+                      hs.status = "Progressing"
+                      hs.message = ""
+                      if obj.status ~= nil then
+                        if obj.status.health ~= nil then
+                          hs.status = obj.status.health.status
+                          if obj.status.health.message ~= nil then
+                            hs.message = obj.status.health.message
+                          end
+                        end
+                      end
+                      return hs
+            EOT,
+        ]
+      [32m+[0m[0m verify                     = false
+      [32m+[0m[0m version                    = "10.10.1"
+      [32m+[0m[0m wait                       = true
+      [32m+[0m[0m wait_for_jobs              = false
+    }
+
+[1m  # helm_release.calico[0m will be created
+[0m  [32m+[0m[0m resource "helm_release" "calico" {
+      [32m+[0m[0m atomic                     = false
+      [32m+[0m[0m chart                      = "tigera-operator"
+      [32m+[0m[0m cleanup_on_fail            = false
+      [32m+[0m[0m create_namespace           = true
+      [32m+[0m[0m dependency_update          = false
+      [32m+[0m[0m disable_crd_hooks          = false
+      [32m+[0m[0m disable_openapi_validation = false
+      [32m+[0m[0m disable_webhooks           = false
+      [32m+[0m[0m force_update               = false
+      [32m+[0m[0m id                         = (known after apply)
+      [32m+[0m[0m lint                       = false
+      [32m+[0m[0m manifest                   = (known after apply)
+      [32m+[0m[0m max_history                = 0
+      [32m+[0m[0m metadata                   = (known after apply)
+      [32m+[0m[0m name                       = "calico"
+      [32m+[0m[0m namespace                  = "tigera-operator"
+      [32m+[0m[0m pass_credentials           = false
+      [32m+[0m[0m recreate_pods              = false
+      [32m+[0m[0m render_subchart_notes      = true
+      [32m+[0m[0m replace                    = false
+      [32m+[0m[0m repository                 = "https://docs.tigera.io/calico/charts"
+      [32m+[0m[0m reset_values               = false
+      [32m+[0m[0m reuse_values               = false
+      [32m+[0m[0m skip_crds                  = false
+      [32m+[0m[0m status                     = "deployed"
+      [32m+[0m[0m timeout                    = 900
+      [32m+[0m[0m verify                     = false
+      [32m+[0m[0m version                    = "v3.29.3"
+      [32m+[0m[0m wait                       = true
+      [32m+[0m[0m wait_for_jobs              = false
+
+      [32m+[0m[0m set {
+          [32m+[0m[0m name  = "apiServer.enabled"
+          [32m+[0m[0m value = "false"
+            [90m# (1 unchanged attribute hidden)[0m[0m
+        }
+    }
+
+[1m  # helm_release.root_app[0m will be created
+[0m  [32m+[0m[0m resource "helm_release" "root_app" {
+      [32m+[0m[0m atomic                     = false
+      [32m+[0m[0m chart                      = "argocd-apps"
+      [32m+[0m[0m cleanup_on_fail            = false
+      [32m+[0m[0m create_namespace           = false
+      [32m+[0m[0m dependency_update          = false
+      [32m+[0m[0m disable_crd_hooks          = false
+      [32m+[0m[0m disable_openapi_validation = false
+      [32m+[0m[0m disable_webhooks           = false
+      [32m+[0m[0m force_update               = false
+      [32m+[0m[0m id                         = (known after apply)
+      [32m+[0m[0m lint                       = false
+      [32m+[0m[0m manifest                   = (known after apply)
+      [32m+[0m[0m max_history                = 0
+      [32m+[0m[0m metadata                   = (known after apply)
+      [32m+[0m[0m name                       = "root-app"
+      [32m+[0m[0m namespace                  = "argocd"
+      [32m+[0m[0m pass_credentials           = false
+      [32m+[0m[0m recreate_pods              = false
+      [32m+[0m[0m render_subchart_notes      = true
+      [32m+[0m[0m replace                    = false
+      [32m+[0m[0m repository                 = "https://argoproj.github.io/argo-helm"
+      [32m+[0m[0m reset_values               = false
+      [32m+[0m[0m reuse_values               = false
+      [32m+[0m[0m skip_crds                  = false
+      [32m+[0m[0m status                     = "deployed"
+      [32m+[0m[0m timeout                    = 300
+      [32m+[0m[0m values                     = [
+          [32m+[0m[0m <<-EOT
+                # Aplicacion raiz (app-of-apps): levanta todo lo declarado en argocd/ del repo GitOps
+                applications:
+                  root-app:
+                    namespace: argocd
+                    project: default
+                    source:
+                      repoURL: https://github.com/aidaorantes9/P8_GITOPS_202100239.git
+                      targetRevision: main
+                      path: argocd
+                      directory:
+                        exclude: "*-staging.yaml"
+                    destination:
+                      server: https://kubernetes.default.svc
+                      namespace: argocd
+                    syncPolicy:
+                      automated:
+                        prune: true
+                        selfHeal: true
+            EOT,
+        ]
+      [32m+[0m[0m verify                     = false
+      [32m+[0m[0m version                    = "2.0.6"
+      [32m+[0m[0m wait                       = true
+      [32m+[0m[0m wait_for_jobs              = false
+    }
+
+[1m  # kubernetes_annotations.sc_local[0m will be updated in-place
+[0m  [33m~[0m[0m resource "kubernetes_annotations" "sc_local" {
+      [33m~[0m[0m annotations          = {
+          [32m+[0m[0m "defaultVolumeType" = "local"
+        }
+        id                   = "apiVersion=storage.k8s.io/v1,kind=StorageClass,name=standard"
+        [90m# (4 unchanged attributes hidden)[0m[0m
+
+        [90m# (1 unchanged block hidden)[0m[0m
+    }
+
+[1m  # kubernetes_limit_range.limits["production"][0m will be created
+[0m  [32m+[0m[0m resource "kubernetes_limit_range" "limits" {
+      [32m+[0m[0m id = (known after apply)
+
+      [32m+[0m[0m metadata {
+          [32m+[0m[0m generation       = (known after apply)
+          [32m+[0m[0m name             = "sa-p8-limits"
+          [32m+[0m[0m namespace        = "production"
+          [32m+[0m[0m resource_version = (known after apply)
+          [32m+[0m[0m uid              = (known after apply)
+        }
+
+      [32m+[0m[0m spec {
+          [32m+[0m[0m limit {
+              [32m+[0m[0m default         = {
+                  [32m+[0m[0m "cpu"    = "200m"
+                  [32m+[0m[0m "memory" = "128Mi"
+                }
+              [32m+[0m[0m default_request = {
+                  [32m+[0m[0m "cpu"    = "50m"
+                  [32m+[0m[0m "memory" = "64Mi"
+                }
+              [32m+[0m[0m type            = "Container"
+            }
+        }
+    }
+
+[1m  # kubernetes_limit_range.limits["staging"][0m will be created
+[0m  [32m+[0m[0m resource "kubernetes_limit_range" "limits" {
+      [32m+[0m[0m id = (known after apply)
+
+      [32m+[0m[0m metadata {
+          [32m+[0m[0m generation       = (known after apply)
+          [32m+[0m[0m name             = "sa-p8-limits"
+          [32m+[0m[0m namespace        = "staging"
+          [32m+[0m[0m resource_version = (known after apply)
+          [32m+[0m[0m uid              = (known after apply)
+        }
+
+      [32m+[0m[0m spec {
+          [32m+[0m[0m limit {
+              [32m+[0m[0m default         = {
+                  [32m+[0m[0m "cpu"    = "200m"
+                  [32m+[0m[0m "memory" = "128Mi"
+                }
+              [32m+[0m[0m default_request = {
+                  [32m+[0m[0m "cpu"    = "50m"
+                  [32m+[0m[0m "memory" = "64Mi"
+                }
+              [32m+[0m[0m type            = "Container"
+            }
+        }
+    }
+
+[1m  # kubernetes_namespace.ambiente["production"][0m will be created
+[0m  [32m+[0m[0m resource "kubernetes_namespace" "ambiente" {
+      [32m+[0m[0m id                               = (known after apply)
+      [32m+[0m[0m wait_for_default_service_account = false
+
+      [32m+[0m[0m metadata {
+          [32m+[0m[0m generation       = (known after apply)
+          [32m+[0m[0m name             = "production"
+          [32m+[0m[0m resource_version = (known after apply)
+          [32m+[0m[0m uid              = (known after apply)
+        }
+    }
+
+[1m  # kubernetes_namespace.ambiente["staging"][0m will be created
+[0m  [32m+[0m[0m resource "kubernetes_namespace" "ambiente" {
+      [32m+[0m[0m id                               = (known after apply)
+      [32m+[0m[0m wait_for_default_service_account = false
+
+      [32m+[0m[0m metadata {
+          [32m+[0m[0m generation       = (known after apply)
+          [32m+[0m[0m name             = "staging"
+          [32m+[0m[0m resource_version = (known after apply)
+          [32m+[0m[0m uid              = (known after apply)
+        }
+    }
+
+[1m  # kubernetes_namespace.velero[0m will be created
+[0m  [32m+[0m[0m resource "kubernetes_namespace" "velero" {
+      [32m+[0m[0m id                               = (known after apply)
+      [32m+[0m[0m wait_for_default_service_account = false
+
+      [32m+[0m[0m metadata {
+          [32m+[0m[0m generation       = (known after apply)
+          [32m+[0m[0m name             = "velero"
+          [32m+[0m[0m resource_version = (known after apply)
+          [32m+[0m[0m uid              = (known after apply)
+        }
+    }
+
+[1m  # kubernetes_resource_quota.quota["production"][0m will be created
+[0m  [32m+[0m[0m resource "kubernetes_resource_quota" "quota" {
+      [32m+[0m[0m id = (known after apply)
+
+      [32m+[0m[0m metadata {
+          [32m+[0m[0m generation       = (known after apply)
+          [32m+[0m[0m name             = "sa-p8-quota"
+          [32m+[0m[0m namespace        = "production"
+          [32m+[0m[0m resource_version = (known after apply)
+          [32m+[0m[0m uid              = (known after apply)
+        }
+
+      [32m+[0m[0m spec {
+          [32m+[0m[0m hard = {
+              [32m+[0m[0m "limits.cpu"      = "4"
+              [32m+[0m[0m "limits.memory"   = "4Gi"
+              [32m+[0m[0m "pods"            = "30"
+              [32m+[0m[0m "requests.cpu"    = "2"
+              [32m+[0m[0m "requests.memory" = "2Gi"
+            }
+        }
+    }
+
+[1m  # kubernetes_resource_quota.quota["staging"][0m will be created
+[0m  [32m+[0m[0m resource "kubernetes_resource_quota" "quota" {
+      [32m+[0m[0m id = (known after apply)
+
+      [32m+[0m[0m metadata {
+          [32m+[0m[0m generation       = (known after apply)
+          [32m+[0m[0m name             = "sa-p8-quota"
+          [32m+[0m[0m namespace        = "staging"
+          [32m+[0m[0m resource_version = (known after apply)
+          [32m+[0m[0m uid              = (known after apply)
+        }
+
+      [32m+[0m[0m spec {
+          [32m+[0m[0m hard = {
+              [32m+[0m[0m "limits.cpu"      = "4"
+              [32m+[0m[0m "limits.memory"   = "4Gi"
+              [32m+[0m[0m "pods"            = "30"
+              [32m+[0m[0m "requests.cpu"    = "2"
+              [32m+[0m[0m "requests.memory" = "2Gi"
+            }
+        }
+    }
+
+[1m  # kubernetes_role.rol["production-api-gateway"][0m will be created
+[0m  [32m+[0m[0m resource "kubernetes_role" "rol" {
+      [32m+[0m[0m id = (known after apply)
+
+      [32m+[0m[0m metadata {
+          [32m+[0m[0m generation       = (known after apply)
+          [32m+[0m[0m name             = "api-gateway-role"
+          [32m+[0m[0m namespace        = "production"
+          [32m+[0m[0m resource_version = (known after apply)
+          [32m+[0m[0m uid              = (known after apply)
+        }
+
+      [32m+[0m[0m rule {
+          [32m+[0m[0m api_groups     = [
+              [32m+[0m[0m [90mnull[0m[0m,
+            ]
+          [32m+[0m[0m resource_names = [
+              [32m+[0m[0m "api-gateway",
+            ]
+          [32m+[0m[0m resources      = [
+              [32m+[0m[0m "serviceaccounts",
+            ]
+          [32m+[0m[0m verbs          = [
+              [32m+[0m[0m "get",
+            ]
+        }
+    }
+
+[1m  # kubernetes_role.rol["production-appointments-service"][0m will be created
+[0m  [32m+[0m[0m resource "kubernetes_role" "rol" {
+      [32m+[0m[0m id = (known after apply)
+
+      [32m+[0m[0m metadata {
+          [32m+[0m[0m generation       = (known after apply)
+          [32m+[0m[0m name             = "appointments-service-role"
+          [32m+[0m[0m namespace        = "production"
+          [32m+[0m[0m resource_version = (known after apply)
+          [32m+[0m[0m uid              = (known after apply)
+        }
+
+      [32m+[0m[0m rule {
+          [32m+[0m[0m api_groups     = [
+              [32m+[0m[0m [90mnull[0m[0m,
+            ]
+          [32m+[0m[0m resource_names = [
+              [32m+[0m[0m "appointments-service",
+            ]
+          [32m+[0m[0m resources      = [
+              [32m+[0m[0m "serviceaccounts",
+            ]
+          [32m+[0m[0m verbs          = [
+              [32m+[0m[0m "get",
+            ]
+        }
+    }
+
+[1m  # kubernetes_role.rol["production-artists-service"][0m will be created
+[0m  [32m+[0m[0m resource "kubernetes_role" "rol" {
+      [32m+[0m[0m id = (known after apply)
+
+      [32m+[0m[0m metadata {
+          [32m+[0m[0m generation       = (known after apply)
+          [32m+[0m[0m name             = "artists-service-role"
+          [32m+[0m[0m namespace        = "production"
+          [32m+[0m[0m resource_version = (known after apply)
+          [32m+[0m[0m uid              = (known after apply)
+        }
+
+      [32m+[0m[0m rule {
+          [32m+[0m[0m api_groups     = [
+              [32m+[0m[0m [90mnull[0m[0m,
+            ]
+          [32m+[0m[0m resource_names = [
+              [32m+[0m[0m "artists-service",
+            ]
+          [32m+[0m[0m resources      = [
+              [32m+[0m[0m "serviceaccounts",
+            ]
+          [32m+[0m[0m verbs          = [
+              [32m+[0m[0m "get",
+            ]
+        }
+    }
+
+[1m  # kubernetes_role.rol["production-auth-service"][0m will be created
+[0m  [32m+[0m[0m resource "kubernetes_role" "rol" {
+      [32m+[0m[0m id = (known after apply)
+
+      [32m+[0m[0m metadata {
+          [32m+[0m[0m generation       = (known after apply)
+          [32m+[0m[0m name             = "auth-service-role"
+          [32m+[0m[0m namespace        = "production"
+          [32m+[0m[0m resource_version = (known after apply)
+          [32m+[0m[0m uid              = (known after apply)
+        }
+
+      [32m+[0m[0m rule {
+          [32m+[0m[0m api_groups     = [
+              [32m+[0m[0m [90mnull[0m[0m,
+            ]
+          [32m+[0m[0m resource_names = [
+              [32m+[0m[0m "auth-service",
+            ]
+          [32m+[0m[0m resources      = [
+              [32m+[0m[0m "serviceaccounts",
+            ]
+          [32m+[0m[0m verbs          = [
+              [32m+[0m[0m "get",
+            ]
+        }
+    }
+
+[1m  # kubernetes_role.rol["production-notification-service"][0m will be created
+[0m  [32m+[0m[0m resource "kubernetes_role" "rol" {
+      [32m+[0m[0m id = (known after apply)
+
+      [32m+[0m[0m metadata {
+          [32m+[0m[0m generation       = (known after apply)
+          [32m+[0m[0m name             = "notification-service-role"
+          [32m+[0m[0m namespace        = "production"
+          [32m+[0m[0m resource_version = (known after apply)
+          [32m+[0m[0m uid              = (known after apply)
+        }
+
+      [32m+[0m[0m rule {
+          [32m+[0m[0m api_groups     = [
+              [32m+[0m[0m [90mnull[0m[0m,
+            ]
+          [32m+[0m[0m resource_names = [
+              [32m+[0m[0m "notification-service",
+            ]
+          [32m+[0m[0m resources      = [
+              [32m+[0m[0m "serviceaccounts",
+            ]
+          [32m+[0m[0m verbs          = [
+              [32m+[0m[0m "get",
+            ]
+        }
+    }
+
+[1m  # kubernetes_role.rol["staging-api-gateway"][0m will be created
+[0m  [32m+[0m[0m resource "kubernetes_role" "rol" {
+      [32m+[0m[0m id = (known after apply)
+
+      [32m+[0m[0m metadata {
+          [32m+[0m[0m generation       = (known after apply)
+          [32m+[0m[0m name             = "api-gateway-role"
+          [32m+[0m[0m namespace        = "staging"
+          [32m+[0m[0m resource_version = (known after apply)
+          [32m+[0m[0m uid              = (known after apply)
+        }
+
+      [32m+[0m[0m rule {
+          [32m+[0m[0m api_groups     = [
+              [32m+[0m[0m [90mnull[0m[0m,
+            ]
+          [32m+[0m[0m resource_names = [
+              [32m+[0m[0m "api-gateway",
+            ]
+          [32m+[0m[0m resources      = [
+              [32m+[0m[0m "serviceaccounts",
+            ]
+          [32m+[0m[0m verbs          = [
+              [32m+[0m[0m "get",
+            ]
+        }
+    }
+
+[1m  # kubernetes_role.rol["staging-appointments-service"][0m will be created
+[0m  [32m+[0m[0m resource "kubernetes_role" "rol" {
+      [32m+[0m[0m id = (known after apply)
+
+      [32m+[0m[0m metadata {
+          [32m+[0m[0m generation       = (known after apply)
+          [32m+[0m[0m name             = "appointments-service-role"
+          [32m+[0m[0m namespace        = "staging"
+          [32m+[0m[0m resource_version = (known after apply)
+          [32m+[0m[0m uid              = (known after apply)
+        }
+
+      [32m+[0m[0m rule {
+          [32m+[0m[0m api_groups     = [
+              [32m+[0m[0m [90mnull[0m[0m,
+            ]
+          [32m+[0m[0m resource_names = [
+              [32m+[0m[0m "appointments-service",
+            ]
+          [32m+[0m[0m resources      = [
+              [32m+[0m[0m "serviceaccounts",
+            ]
+          [32m+[0m[0m verbs          = [
+              [32m+[0m[0m "get",
+            ]
+        }
+    }
+
+[1m  # kubernetes_role.rol["staging-artists-service"][0m will be created
+[0m  [32m+[0m[0m resource "kubernetes_role" "rol" {
+      [32m+[0m[0m id = (known after apply)
+
+      [32m+[0m[0m metadata {
+          [32m+[0m[0m generation       = (known after apply)
+          [32m+[0m[0m name             = "artists-service-role"
+          [32m+[0m[0m namespace        = "staging"
+          [32m+[0m[0m resource_version = (known after apply)
+          [32m+[0m[0m uid              = (known after apply)
+        }
+
+      [32m+[0m[0m rule {
+          [32m+[0m[0m api_groups     = [
+              [32m+[0m[0m [90mnull[0m[0m,
+            ]
+          [32m+[0m[0m resource_names = [
+              [32m+[0m[0m "artists-service",
+            ]
+          [32m+[0m[0m resources      = [
+              [32m+[0m[0m "serviceaccounts",
+            ]
+          [32m+[0m[0m verbs          = [
+              [32m+[0m[0m "get",
+            ]
+        }
+    }
+
+[1m  # kubernetes_role.rol["staging-auth-service"][0m will be created
+[0m  [32m+[0m[0m resource "kubernetes_role" "rol" {
+      [32m+[0m[0m id = (known after apply)
+
+      [32m+[0m[0m metadata {
+          [32m+[0m[0m generation       = (known after apply)
+          [32m+[0m[0m name             = "auth-service-role"
+          [32m+[0m[0m namespace        = "staging"
+          [32m+[0m[0m resource_version = (known after apply)
+          [32m+[0m[0m uid              = (known after apply)
+        }
+
+      [32m+[0m[0m rule {
+          [32m+[0m[0m api_groups     = [
+              [32m+[0m[0m [90mnull[0m[0m,
+            ]
+          [32m+[0m[0m resource_names = [
+              [32m+[0m[0m "auth-service",
+            ]
+          [32m+[0m[0m resources      = [
+              [32m+[0m[0m "serviceaccounts",
+            ]
+          [32m+[0m[0m verbs          = [
+              [32m+[0m[0m "get",
+            ]
+        }
+    }
+
+[1m  # kubernetes_role.rol["staging-notification-service"][0m will be created
+[0m  [32m+[0m[0m resource "kubernetes_role" "rol" {
+      [32m+[0m[0m id = (known after apply)
+
+      [32m+[0m[0m metadata {
+          [32m+[0m[0m generation       = (known after apply)
+          [32m+[0m[0m name             = "notification-service-role"
+          [32m+[0m[0m namespace        = "staging"
+          [32m+[0m[0m resource_version = (known after apply)
+          [32m+[0m[0m uid              = (known after apply)
+        }
+
+      [32m+[0m[0m rule {
+          [32m+[0m[0m api_groups     = [
+              [32m+[0m[0m [90mnull[0m[0m,
+            ]
+          [32m+[0m[0m resource_names = [
+              [32m+[0m[0m "notification-service",
+            ]
+          [32m+[0m[0m resources      = [
+              [32m+[0m[0m "serviceaccounts",
+            ]
+          [32m+[0m[0m verbs          = [
+              [32m+[0m[0m "get",
+            ]
+        }
+    }
+
+[1m  # kubernetes_role_binding.enlace["production-api-gateway"][0m will be created
+[0m  [32m+[0m[0m resource "kubernetes_role_binding" "enlace" {
+      [32m+[0m[0m id = (known after apply)
+
+      [32m+[0m[0m metadata {
+          [32m+[0m[0m generation       = (known after apply)
+          [32m+[0m[0m name             = "api-gateway-rolebinding"
+          [32m+[0m[0m namespace        = "production"
+          [32m+[0m[0m resource_version = (known after apply)
+          [32m+[0m[0m uid              = (known after apply)
+        }
+
+      [32m+[0m[0m role_ref {
+          [32m+[0m[0m api_group = "rbac.authorization.k8s.io"
+          [32m+[0m[0m kind      = "Role"
+          [32m+[0m[0m name      = "api-gateway-role"
+        }
+
+      [32m+[0m[0m subject {
+          [32m+[0m[0m api_group = (known after apply)
+          [32m+[0m[0m kind      = "ServiceAccount"
+          [32m+[0m[0m name      = "api-gateway"
+          [32m+[0m[0m namespace = "production"
+        }
+    }
+
+[1m  # kubernetes_role_binding.enlace["production-appointments-service"][0m will be created
+[0m  [32m+[0m[0m resource "kubernetes_role_binding" "enlace" {
+      [32m+[0m[0m id = (known after apply)
+
+      [32m+[0m[0m metadata {
+          [32m+[0m[0m generation       = (known after apply)
+          [32m+[0m[0m name             = "appointments-service-rolebinding"
+          [32m+[0m[0m namespace        = "production"
+          [32m+[0m[0m resource_version = (known after apply)
+          [32m+[0m[0m uid              = (known after apply)
+        }
+
+      [32m+[0m[0m role_ref {
+          [32m+[0m[0m api_group = "rbac.authorization.k8s.io"
+          [32m+[0m[0m kind      = "Role"
+          [32m+[0m[0m name      = "appointments-service-role"
+        }
+
+      [32m+[0m[0m subject {
+          [32m+[0m[0m api_group = (known after apply)
+          [32m+[0m[0m kind      = "ServiceAccount"
+          [32m+[0m[0m name      = "appointments-service"
+          [32m+[0m[0m namespace = "production"
+        }
+    }
+
+[1m  # kubernetes_role_binding.enlace["production-artists-service"][0m will be created
+[0m  [32m+[0m[0m resource "kubernetes_role_binding" "enlace" {
+      [32m+[0m[0m id = (known after apply)
+
+      [32m+[0m[0m metadata {
+          [32m+[0m[0m generation       = (known after apply)
+          [32m+[0m[0m name             = "artists-service-rolebinding"
+          [32m+[0m[0m namespace        = "production"
+          [32m+[0m[0m resource_version = (known after apply)
+          [32m+[0m[0m uid              = (known after apply)
+        }
+
+      [32m+[0m[0m role_ref {
+          [32m+[0m[0m api_group = "rbac.authorization.k8s.io"
+          [32m+[0m[0m kind      = "Role"
+          [32m+[0m[0m name      = "artists-service-role"
+        }
+
+      [32m+[0m[0m subject {
+          [32m+[0m[0m api_group = (known after apply)
+          [32m+[0m[0m kind      = "ServiceAccount"
+          [32m+[0m[0m name      = "artists-service"
+          [32m+[0m[0m namespace = "production"
+        }
+    }
+
+[1m  # kubernetes_role_binding.enlace["production-auth-service"][0m will be created
+[0m  [32m+[0m[0m resource "kubernetes_role_binding" "enlace" {
+      [32m+[0m[0m id = (known after apply)
+
+      [32m+[0m[0m metadata {
+          [32m+[0m[0m generation       = (known after apply)
+          [32m+[0m[0m name             = "auth-service-rolebinding"
+          [32m+[0m[0m namespace        = "production"
+          [32m+[0m[0m resource_version = (known after apply)
+          [32m+[0m[0m uid              = (known after apply)
+        }
+
+      [32m+[0m[0m role_ref {
+          [32m+[0m[0m api_group = "rbac.authorization.k8s.io"
+          [32m+[0m[0m kind      = "Role"
+          [32m+[0m[0m name      = "auth-service-role"
+        }
+
+      [32m+[0m[0m subject {
+          [32m+[0m[0m api_group = (known after apply)
+          [32m+[0m[0m kind      = "ServiceAccount"
+          [32m+[0m[0m name      = "auth-service"
+          [32m+[0m[0m namespace = "production"
+        }
+    }
+
+[1m  # kubernetes_role_binding.enlace["production-notification-service"][0m will be created
+[0m  [32m+[0m[0m resource "kubernetes_role_binding" "enlace" {
+      [32m+[0m[0m id = (known after apply)
+
+      [32m+[0m[0m metadata {
+          [32m+[0m[0m generation       = (known after apply)
+          [32m+[0m[0m name             = "notification-service-rolebinding"
+          [32m+[0m[0m namespace        = "production"
+          [32m+[0m[0m resource_version = (known after apply)
+          [32m+[0m[0m uid              = (known after apply)
+        }
+
+      [32m+[0m[0m role_ref {
+          [32m+[0m[0m api_group = "rbac.authorization.k8s.io"
+          [32m+[0m[0m kind      = "Role"
+          [32m+[0m[0m name      = "notification-service-role"
+        }
+
+      [32m+[0m[0m subject {
+          [32m+[0m[0m api_group = (known after apply)
+          [32m+[0m[0m kind      = "ServiceAccount"
+          [32m+[0m[0m name      = "notification-service"
+          [32m+[0m[0m namespace = "production"
+        }
+    }
+
+[1m  # kubernetes_role_binding.enlace["staging-api-gateway"][0m will be created
+[0m  [32m+[0m[0m resource "kubernetes_role_binding" "enlace" {
+      [32m+[0m[0m id = (known after apply)
+
+      [32m+[0m[0m metadata {
+          [32m+[0m[0m generation       = (known after apply)
+          [32m+[0m[0m name             = "api-gateway-rolebinding"
+          [32m+[0m[0m namespace        = "staging"
+          [32m+[0m[0m resource_version = (known after apply)
+          [32m+[0m[0m uid              = (known after apply)
+        }
+
+      [32m+[0m[0m role_ref {
+          [32m+[0m[0m api_group = "rbac.authorization.k8s.io"
+          [32m+[0m[0m kind      = "Role"
+          [32m+[0m[0m name      = "api-gateway-role"
+        }
+
+      [32m+[0m[0m subject {
+          [32m+[0m[0m api_group = (known after apply)
+          [32m+[0m[0m kind      = "ServiceAccount"
+          [32m+[0m[0m name      = "api-gateway"
+          [32m+[0m[0m namespace = "staging"
+        }
+    }
+
+[1m  # kubernetes_role_binding.enlace["staging-appointments-service"][0m will be created
+[0m  [32m+[0m[0m resource "kubernetes_role_binding" "enlace" {
+      [32m+[0m[0m id = (known after apply)
+
+      [32m+[0m[0m metadata {
+          [32m+[0m[0m generation       = (known after apply)
+          [32m+[0m[0m name             = "appointments-service-rolebinding"
+          [32m+[0m[0m namespace        = "staging"
+          [32m+[0m[0m resource_version = (known after apply)
+          [32m+[0m[0m uid              = (known after apply)
+        }
+
+      [32m+[0m[0m role_ref {
+          [32m+[0m[0m api_group = "rbac.authorization.k8s.io"
+          [32m+[0m[0m kind      = "Role"
+          [32m+[0m[0m name      = "appointments-service-role"
+        }
+
+      [32m+[0m[0m subject {
+          [32m+[0m[0m api_group = (known after apply)
+          [32m+[0m[0m kind      = "ServiceAccount"
+          [32m+[0m[0m name      = "appointments-service"
+          [32m+[0m[0m namespace = "staging"
+        }
+    }
+
+[1m  # kubernetes_role_binding.enlace["staging-artists-service"][0m will be created
+[0m  [32m+[0m[0m resource "kubernetes_role_binding" "enlace" {
+      [32m+[0m[0m id = (known after apply)
+
+      [32m+[0m[0m metadata {
+          [32m+[0m[0m generation       = (known after apply)
+          [32m+[0m[0m name             = "artists-service-rolebinding"
+          [32m+[0m[0m namespace        = "staging"
+          [32m+[0m[0m resource_version = (known after apply)
+          [32m+[0m[0m uid              = (known after apply)
+        }
+
+      [32m+[0m[0m role_ref {
+          [32m+[0m[0m api_group = "rbac.authorization.k8s.io"
+          [32m+[0m[0m kind      = "Role"
+          [32m+[0m[0m name      = "artists-service-role"
+        }
+
+      [32m+[0m[0m subject {
+          [32m+[0m[0m api_group = (known after apply)
+          [32m+[0m[0m kind      = "ServiceAccount"
+          [32m+[0m[0m name      = "artists-service"
+          [32m+[0m[0m namespace = "staging"
+        }
+    }
+
+[1m  # kubernetes_role_binding.enlace["staging-auth-service"][0m will be created
+[0m  [32m+[0m[0m resource "kubernetes_role_binding" "enlace" {
+      [32m+[0m[0m id = (known after apply)
+
+      [32m+[0m[0m metadata {
+          [32m+[0m[0m generation       = (known after apply)
+          [32m+[0m[0m name             = "auth-service-rolebinding"
+          [32m+[0m[0m namespace        = "staging"
+          [32m+[0m[0m resource_version = (known after apply)
+          [32m+[0m[0m uid              = (known after apply)
+        }
+
+      [32m+[0m[0m role_ref {
+          [32m+[0m[0m api_group = "rbac.authorization.k8s.io"
+          [32m+[0m[0m kind      = "Role"
+          [32m+[0m[0m name      = "auth-service-role"
+        }
+
+      [32m+[0m[0m subject {
+          [32m+[0m[0m api_group = (known after apply)
+          [32m+[0m[0m kind      = "ServiceAccount"
+          [32m+[0m[0m name      = "auth-service"
+          [32m+[0m[0m namespace = "staging"
+        }
+    }
+
+[1m  # kubernetes_role_binding.enlace["staging-notification-service"][0m will be created
+[0m  [32m+[0m[0m resource "kubernetes_role_binding" "enlace" {
+      [32m+[0m[0m id = (known after apply)
+
+      [32m+[0m[0m metadata {
+          [32m+[0m[0m generation       = (known after apply)
+          [32m+[0m[0m name             = "notification-service-rolebinding"
+          [32m+[0m[0m namespace        = "staging"
+          [32m+[0m[0m resource_version = (known after apply)
+          [32m+[0m[0m uid              = (known after apply)
+        }
+
+      [32m+[0m[0m role_ref {
+          [32m+[0m[0m api_group = "rbac.authorization.k8s.io"
+          [32m+[0m[0m kind      = "Role"
+          [32m+[0m[0m name      = "notification-service-role"
+        }
+
+      [32m+[0m[0m subject {
+          [32m+[0m[0m api_group = (known after apply)
+          [32m+[0m[0m kind      = "ServiceAccount"
+          [32m+[0m[0m name      = "notification-service"
+          [32m+[0m[0m namespace = "staging"
+        }
+    }
+
+[1m  # kubernetes_secret.sealed_secrets_key[0m will be created
+[0m  [32m+[0m[0m resource "kubernetes_secret" "sealed_secrets_key" {
+      [32m+[0m[0m binary_data_wo                 = (write-only attribute)
+      [32m+[0m[0m data                           = (sensitive value)
+      [32m+[0m[0m data_wo                        = (write-only attribute)
+      [32m+[0m[0m id                             = (known after apply)
+      [32m+[0m[0m type                           = "kubernetes.io/tls"
+      [32m+[0m[0m wait_for_service_account_token = true
+
+      [32m+[0m[0m metadata {
+          [32m+[0m[0m generation       = (known after apply)
+          [32m+[0m[0m labels           = {
+              [32m+[0m[0m "sealedsecrets.bitnami.com/sealed-secrets-key" = "active"
+            }
+          [32m+[0m[0m name             = "sealed-secrets-key-restaurada"
+          [32m+[0m[0m namespace        = "kube-system"
+          [32m+[0m[0m resource_version = (known after apply)
+          [32m+[0m[0m uid              = (known after apply)
+        }
+    }
+
+[1m  # kubernetes_secret.velero_credentials[0m will be created
+[0m  [32m+[0m[0m resource "kubernetes_secret" "velero_credentials" {
+      [32m+[0m[0m binary_data_wo                 = (write-only attribute)
+      [32m+[0m[0m data                           = (sensitive value)
+      [32m+[0m[0m data_wo                        = (write-only attribute)
+      [32m+[0m[0m id                             = (known after apply)
+      [32m+[0m[0m type                           = "Opaque"
+      [32m+[0m[0m wait_for_service_account_token = true
+
+      [32m+[0m[0m metadata {
+          [32m+[0m[0m generation       = (known after apply)
+          [32m+[0m[0m name             = "velero-gcp-credentials"
+          [32m+[0m[0m namespace        = "velero"
+          [32m+[0m[0m resource_version = (known after apply)
+          [32m+[0m[0m uid              = (known after apply)
+        }
+    }
+
+[1m  # kubernetes_service_account.sa["production-api-gateway"][0m will be created
+[0m  [32m+[0m[0m resource "kubernetes_service_account" "sa" {
+      [32m+[0m[0m automount_service_account_token = true
+      [32m+[0m[0m default_secret_name             = (known after apply)
+      [32m+[0m[0m id                              = (known after apply)
+
+      [32m+[0m[0m metadata {
+          [32m+[0m[0m generation       = (known after apply)
+          [32m+[0m[0m name             = "api-gateway"
+          [32m+[0m[0m namespace        = "production"
+          [32m+[0m[0m resource_version = (known after apply)
+          [32m+[0m[0m uid              = (known after apply)
+        }
+    }
+
+[1m  # kubernetes_service_account.sa["production-appointments-service"][0m will be created
+[0m  [32m+[0m[0m resource "kubernetes_service_account" "sa" {
+      [32m+[0m[0m automount_service_account_token = true
+      [32m+[0m[0m default_secret_name             = (known after apply)
+      [32m+[0m[0m id                              = (known after apply)
+
+      [32m+[0m[0m metadata {
+          [32m+[0m[0m generation       = (known after apply)
+          [32m+[0m[0m name             = "appointments-service"
+          [32m+[0m[0m namespace        = "production"
+          [32m+[0m[0m resource_version = (known after apply)
+          [32m+[0m[0m uid              = (known after apply)
+        }
+    }
+
+[1m  # kubernetes_service_account.sa["production-artists-service"][0m will be created
+[0m  [32m+[0m[0m resource "kubernetes_service_account" "sa" {
+      [32m+[0m[0m automount_service_account_token = true
+      [32m+[0m[0m default_secret_name             = (known after apply)
+      [32m+[0m[0m id                              = (known after apply)
+
+      [32m+[0m[0m metadata {
+          [32m+[0m[0m generation       = (known after apply)
+          [32m+[0m[0m name             = "artists-service"
+          [32m+[0m[0m namespace        = "production"
+          [32m+[0m[0m resource_version = (known after apply)
+          [32m+[0m[0m uid              = (known after apply)
+        }
+    }
+
+[1m  # kubernetes_service_account.sa["production-auth-service"][0m will be created
+[0m  [32m+[0m[0m resource "kubernetes_service_account" "sa" {
+      [32m+[0m[0m automount_service_account_token = true
+      [32m+[0m[0m default_secret_name             = (known after apply)
+      [32m+[0m[0m id                              = (known after apply)
+
+      [32m+[0m[0m metadata {
+          [32m+[0m[0m generation       = (known after apply)
+          [32m+[0m[0m name             = "auth-service"
+          [32m+[0m[0m namespace        = "production"
+          [32m+[0m[0m resource_version = (known after apply)
+          [32m+[0m[0m uid              = (known after apply)
+        }
+    }
+
+[1m  # kubernetes_service_account.sa["production-notification-service"][0m will be created
+[0m  [32m+[0m[0m resource "kubernetes_service_account" "sa" {
+      [32m+[0m[0m automount_service_account_token = true
+      [32m+[0m[0m default_secret_name             = (known after apply)
+      [32m+[0m[0m id                              = (known after apply)
+
+      [32m+[0m[0m metadata {
+          [32m+[0m[0m generation       = (known after apply)
+          [32m+[0m[0m name             = "notification-service"
+          [32m+[0m[0m namespace        = "production"
+          [32m+[0m[0m resource_version = (known after apply)
+          [32m+[0m[0m uid              = (known after apply)
+        }
+    }
+
+[1m  # kubernetes_service_account.sa["staging-api-gateway"][0m will be created
+[0m  [32m+[0m[0m resource "kubernetes_service_account" "sa" {
+      [32m+[0m[0m automount_service_account_token = true
+      [32m+[0m[0m default_secret_name             = (known after apply)
+      [32m+[0m[0m id                              = (known after apply)
+
+      [32m+[0m[0m metadata {
+          [32m+[0m[0m generation       = (known after apply)
+          [32m+[0m[0m name             = "api-gateway"
+          [32m+[0m[0m namespace        = "staging"
+          [32m+[0m[0m resource_version = (known after apply)
+          [32m+[0m[0m uid              = (known after apply)
+        }
+    }
+
+[1m  # kubernetes_service_account.sa["staging-appointments-service"][0m will be created
+[0m  [32m+[0m[0m resource "kubernetes_service_account" "sa" {
+      [32m+[0m[0m automount_service_account_token = true
+      [32m+[0m[0m default_secret_name             = (known after apply)
+      [32m+[0m[0m id                              = (known after apply)
+
+      [32m+[0m[0m metadata {
+          [32m+[0m[0m generation       = (known after apply)
+          [32m+[0m[0m name             = "appointments-service"
+          [32m+[0m[0m namespace        = "staging"
+          [32m+[0m[0m resource_version = (known after apply)
+          [32m+[0m[0m uid              = (known after apply)
+        }
+    }
+
+[1m  # kubernetes_service_account.sa["staging-artists-service"][0m will be created
+[0m  [32m+[0m[0m resource "kubernetes_service_account" "sa" {
+      [32m+[0m[0m automount_service_account_token = true
+      [32m+[0m[0m default_secret_name             = (known after apply)
+      [32m+[0m[0m id                              = (known after apply)
+
+      [32m+[0m[0m metadata {
+          [32m+[0m[0m generation       = (known after apply)
+          [32m+[0m[0m name             = "artists-service"
+          [32m+[0m[0m namespace        = "staging"
+          [32m+[0m[0m resource_version = (known after apply)
+          [32m+[0m[0m uid              = (known after apply)
+        }
+    }
+
+[1m  # kubernetes_service_account.sa["staging-auth-service"][0m will be created
+[0m  [32m+[0m[0m resource "kubernetes_service_account" "sa" {
+      [32m+[0m[0m automount_service_account_token = true
+      [32m+[0m[0m default_secret_name             = (known after apply)
+      [32m+[0m[0m id                              = (known after apply)
+
+      [32m+[0m[0m metadata {
+          [32m+[0m[0m generation       = (known after apply)
+          [32m+[0m[0m name             = "auth-service"
+          [32m+[0m[0m namespace        = "staging"
+          [32m+[0m[0m resource_version = (known after apply)
+          [32m+[0m[0m uid              = (known after apply)
+        }
+    }
+
+[1m  # kubernetes_service_account.sa["staging-notification-service"][0m will be created
+[0m  [32m+[0m[0m resource "kubernetes_service_account" "sa" {
+      [32m+[0m[0m automount_service_account_token = true
+      [32m+[0m[0m default_secret_name             = (known after apply)
+      [32m+[0m[0m id                              = (known after apply)
+
+      [32m+[0m[0m metadata {
+          [32m+[0m[0m generation       = (known after apply)
+          [32m+[0m[0m name             = "notification-service"
+          [32m+[0m[0m namespace        = "staging"
+          [32m+[0m[0m resource_version = (known after apply)
+          [32m+[0m[0m uid              = (known after apply)
+        }
+    }
+
+[1m  # terraform_data.nodos_listos[0m must be [1m[31mreplaced[0m
+[0m[31m-[0m/[32m+[0m[0m resource "terraform_data" "nodos_listos" {
+      [33m~[0m[0m id               = "d510c3f0-6bf6-d4e7-55ea-278a2eafe555" -> (known after apply)
+      [33m~[0m[0m triggers_replace = [
+          [33m~[0m[0m "https://127.0.0.1:42591" [33m->[0m[0m "https://127.0.0.1:37415",
+        ]
+    }
+
+[1mPlan:[0m [0m43 to add, 1 to change, 1 to destroy.
+[0m[1mterraform_data.nodos_listos: Destroying... [id=d510c3f0-6bf6-d4e7-55ea-278a2eafe555][0m[0m
+[0m[1mterraform_data.nodos_listos: Destruction complete after 0s[0m
+[0m[1mkubernetes_namespace.velero: Creating...[0m[0m
+[0m[1mkubernetes_namespace.ambiente["production"]: Creating...[0m[0m
+[0m[1mkubernetes_namespace.ambiente["staging"]: Creating...[0m[0m
+[0m[1mkubernetes_namespace.ambiente["staging"]: Creation complete after 0s [id=staging][0m
+[0m[1mkubernetes_namespace.ambiente["production"]: Creation complete after 0s [id=production][0m
+[0m[1mkubernetes_namespace.velero: Creation complete after 0s [id=velero][0m
+[0m[1mkubernetes_service_account.sa["staging-api-gateway"]: Creating...[0m[0m
+[0m[1mkubernetes_service_account.sa["production-auth-service"]: Creating...[0m[0m
+[0m[1mkubernetes_service_account.sa["staging-appointments-service"]: Creating...[0m[0m
+[0m[1mkubernetes_resource_quota.quota["staging"]: Creating...[0m[0m
+[0m[1mkubernetes_limit_range.limits["production"]: Creating...[0m[0m
+[0m[1mkubernetes_service_account.sa["production-appointments-service"]: Creating...[0m[0m
+[0m[1mkubernetes_service_account.sa["staging-notification-service"]: Creating...[0m[0m
+[0m[1mkubernetes_limit_range.limits["staging"]: Creating...[0m[0m
+[0m[1mkubernetes_service_account.sa["staging-api-gateway"]: Creation complete after 0s [id=staging/api-gateway][0m
+[0m[1mkubernetes_resource_quota.quota["staging"]: Creation complete after 0s [id=staging/sa-p8-quota][0m
+[0m[1mkubernetes_service_account.sa["production-auth-service"]: Creation complete after 0s [id=production/auth-service][0m
+[0m[1mkubernetes_service_account.sa["staging-appointments-service"]: Creation complete after 0s [id=staging/appointments-service][0m
+[0m[1mkubernetes_resource_quota.quota["production"]: Creating...[0m[0m
+[0m[1mkubernetes_service_account.sa["staging-auth-service"]: Creating...[0m[0m
+[0m[1mkubernetes_service_account.sa["production-artists-service"]: Creating...[0m[0m
+[0m[1mkubernetes_limit_range.limits["staging"]: Creation complete after 0s [id=staging/sa-p8-limits][0m
+[0m[1mkubernetes_role.rol["staging-appointments-service"]: Creating...[0m[0m
+[0m[1mkubernetes_service_account.sa["production-appointments-service"]: Creation complete after 0s [id=production/appointments-service][0m
+[0m[1mkubernetes_limit_range.limits["production"]: Creation complete after 0s [id=production/sa-p8-limits][0m
+[0m[1mkubernetes_service_account.sa["staging-notification-service"]: Creation complete after 0s [id=staging/notification-service][0m
+[0m[1mkubernetes_role.rol["production-auth-service"]: Creating...[0m[0m
+[0m[1mkubernetes_role.rol["staging-auth-service"]: Creating...[0m[0m
+[0m[1mkubernetes_service_account.sa["production-notification-service"]: Creating...[0m[0m
+[0m[1mkubernetes_service_account.sa["production-api-gateway"]: Creating...[0m[0m
+[0m[1mkubernetes_service_account.sa["production-artists-service"]: Creation complete after 1s [id=production/artists-service][0m
+[0m[1mkubernetes_service_account.sa["staging-auth-service"]: Creation complete after 1s [id=staging/auth-service][0m
+[0m[1mkubernetes_role.rol["staging-appointments-service"]: Creation complete after 1s [id=staging/appointments-service-role][0m
+[0m[1mkubernetes_role.rol["production-appointments-service"]: Creating...[0m[0m
+[0m[1mkubernetes_resource_quota.quota["production"]: Creation complete after 1s [id=production/sa-p8-quota][0m
+[0m[1mkubernetes_role.rol["production-auth-service"]: Creation complete after 1s [id=production/auth-service-role][0m
+[0m[1mkubernetes_role.rol["staging-artists-service"]: Creating...[0m[0m
+[0m[1mkubernetes_role.rol["production-artists-service"]: Creating...[0m[0m
+[0m[1mkubernetes_role.rol["staging-auth-service"]: Creation complete after 1s [id=staging/auth-service-role][0m
+[0m[1mkubernetes_service_account.sa["production-api-gateway"]: Creation complete after 1s [id=production/api-gateway][0m
+[0m[1mkubernetes_role.rol["staging-notification-service"]: Creating...[0m[0m
+[0m[1mkubernetes_service_account.sa["production-notification-service"]: Creation complete after 1s [id=production/notification-service][0m
+[0m[1mkubernetes_role.rol["staging-api-gateway"]: Creating...[0m[0m
+[0m[1mkubernetes_role.rol["production-api-gateway"]: Creating...[0m[0m
+[0m[1mkubernetes_role.rol["production-notification-service"]: Creating...[0m[0m
+[0m[1mkubernetes_service_account.sa["staging-artists-service"]: Creating...[0m[0m
+[0m[1mkubernetes_role.rol["production-appointments-service"]: Creation complete after 0s [id=production/appointments-service-role][0m
+[0m[1mkubernetes_role.rol["staging-notification-service"]: Creation complete after 0s [id=staging/notification-service-role][0m
+[0m[1mkubernetes_role.rol["production-artists-service"]: Creation complete after 0s [id=production/artists-service-role][0m
+[0m[1mkubernetes_role.rol["staging-artists-service"]: Creation complete after 0s [id=staging/artists-service-role][0m
+[0m[1mkubernetes_secret.velero_credentials: Creating...[0m[0m
+[0m[1mkubernetes_role.rol["production-api-gateway"]: Creation complete after 0s [id=production/api-gateway-role][0m
+[0m[1mkubernetes_service_account.sa["staging-artists-service"]: Creation complete after 0s [id=staging/artists-service][0m
+[0m[1mkubernetes_secret.sealed_secrets_key: Creating...[0m[0m
+[0m[1mkubernetes_role.rol["production-notification-service"]: Creation complete after 0s [id=production/notification-service-role][0m
+[0m[1mkubernetes_role.rol["staging-api-gateway"]: Creation complete after 0s [id=staging/api-gateway-role][0m
+[0m[1mkubernetes_role_binding.enlace["staging-auth-service"]: Creating...[0m[0m
+[0m[1mkubernetes_role_binding.enlace["staging-artists-service"]: Creating...[0m[0m
+[0m[1mkubernetes_role_binding.enlace["staging-appointments-service"]: Creating...[0m[0m
+[0m[1mkubernetes_role_binding.enlace["production-api-gateway"]: Creating...[0m[0m
+[0m[1mkubernetes_role_binding.enlace["production-artists-service"]: Creating...[0m[0m
+[0m[1mkubernetes_role_binding.enlace["staging-api-gateway"]: Creating...[0m[0m
+[0m[1mkubernetes_role_binding.enlace["production-auth-service"]: Creating...[0m[0m
+[0m[1mkubernetes_secret.velero_credentials: Creation complete after 1s [id=velero/velero-gcp-credentials][0m
+[0m[1mkubernetes_secret.sealed_secrets_key: Creation complete after 1s [id=kube-system/sealed-secrets-key-restaurada][0m
+[0m[1mkubernetes_role_binding.enlace["staging-notification-service"]: Creating...[0m[0m
+[0m[1mkubernetes_role_binding.enlace["production-notification-service"]: Creating...[0m[0m
+[0m[1mkubernetes_role_binding.enlace["staging-appointments-service"]: Creation complete after 3s [id=staging/appointments-service-rolebinding][0m
+[0m[1mkubernetes_role_binding.enlace["production-auth-service"]: Creation complete after 3s [id=production/auth-service-rolebinding][0m
+[0m[1mkubernetes_role_binding.enlace["production-artists-service"]: Creation complete after 3s [id=production/artists-service-rolebinding][0m
+[0m[1mkubernetes_role_binding.enlace["production-appointments-service"]: Creating...[0m[0m
+[0m[1mkubernetes_role_binding.enlace["production-api-gateway"]: Creation complete after 3s [id=production/api-gateway-rolebinding][0m
+[0m[1mkubernetes_role_binding.enlace["staging-auth-service"]: Creation complete after 4s [id=staging/auth-service-rolebinding][0m
+[0m[1mkubernetes_role_binding.enlace["staging-api-gateway"]: Creation complete after 4s [id=staging/api-gateway-rolebinding][0m
+[0m[1mkubernetes_role_binding.enlace["staging-artists-service"]: Creation complete after 4s [id=staging/artists-service-rolebinding][0m
+[0m[1mkubernetes_role_binding.enlace["production-notification-service"]: Creation complete after 1s [id=production/notification-service-rolebinding][0m
+[0m[1mkubernetes_role_binding.enlace["staging-notification-service"]: Creation complete after 2s [id=staging/notification-service-rolebinding][0m
+[0m[1mkubernetes_role_binding.enlace["production-appointments-service"]: Creation complete after 1s [id=production/appointments-service-rolebinding][0m
+[0m[1mhelm_release.calico: Creating...[0m[0m
+[0m[1mhelm_release.calico: Still creating... [00m10s elapsed][0m[0m
+[0m[1mhelm_release.calico: Still creating... [00m20s elapsed][0m[0m
+[0m[1mhelm_release.calico: Creation complete after 24s [id=calico][0m
+[0m[1mterraform_data.nodos_listos: Creating...[0m[0m
+[0m[1mterraform_data.nodos_listos: Provisioning with 'local-exec'...[0m[0m
+[0m[1mterraform_data.nodos_listos (local-exec):[0m [0mExecuting: ["/bin/bash" "-c" "export KUBECONFIG=/home/alejandra/.kube/kind-sa-p9.yaml\ntimeout 600 bash -c 'until kubectl get tigerastatus calico >/dev/null 2>&1; do sleep 5; done'\nkubectl wait --for=condition=Available tigerastatus/calico --timeout=900s\nkubectl wait --for=condition=Ready nodes --all --timeout=300s\n"]
+[0m[1mterraform_data.nodos_listos: Still creating... [00m10s elapsed][0m[0m
+[0m[1mterraform_data.nodos_listos: Still creating... [00m20s elapsed][0m[0m
+[0m[1mterraform_data.nodos_listos: Still creating... [00m30s elapsed][0m[0m
+[0m[1mterraform_data.nodos_listos: Still creating... [00m40s elapsed][0m[0m
+[0m[1mterraform_data.nodos_listos: Still creating... [00m50s elapsed][0m[0m
+[0m[1mterraform_data.nodos_listos: Still creating... [01m00s elapsed][0m[0m
+[0m[1mterraform_data.nodos_listos: Still creating... [01m11s elapsed][0m[0m
+[0m[1mterraform_data.nodos_listos: Still creating... [01m21s elapsed][0m[0m
+[0m[1mterraform_data.nodos_listos: Still creating... [01m31s elapsed][0m[0m
+[0m[1mterraform_data.nodos_listos: Still creating... [01m41s elapsed][0m[0m
+[0m[1mterraform_data.nodos_listos: Still creating... [01m51s elapsed][0m[0m
+[0m[1mterraform_data.nodos_listos: Still creating... [02m01s elapsed][0m[0m
+[0m[1mterraform_data.nodos_listos: Still creating... [02m11s elapsed][0m[0m
+[0m[1mterraform_data.nodos_listos (local-exec):[0m [0mtigerastatus.operator.tigera.io/calico condition met
+[0m[1mterraform_data.nodos_listos (local-exec):[0m [0mnode/sa-p9-control-plane condition met
+[0m[1mterraform_data.nodos_listos (local-exec):[0m [0mnode/sa-p9-worker condition met
+[0m[1mterraform_data.nodos_listos (local-exec):[0m [0mnode/sa-p9-worker2 condition met
+[0m[1mterraform_data.nodos_listos: Creation complete after 2m16s [id=19258c2c-f16b-5891-c3b5-f16f24bda0e4][0m
+[0m[1mkubernetes_annotations.sc_local: Modifying... [id=apiVersion=storage.k8s.io/v1,kind=StorageClass,name=standard][0m[0m
+[0m[1mkubernetes_annotations.sc_local: Modifications complete after 0s [id=apiVersion=storage.k8s.io/v1,kind=StorageClass,name=standard][0m
+[0m[1mhelm_release.argocd: Creating...[0m[0m
+[0m[1mhelm_release.argocd: Still creating... [00m10s elapsed][0m[0m
+[0m[1mhelm_release.argocd: Still creating... [00m20s elapsed][0m[0m
+[0m[1mhelm_release.argocd: Still creating... [00m30s elapsed][0m[0m
+[0m[1mhelm_release.argocd: Still creating... [00m40s elapsed][0m[0m
+[0m[1mhelm_release.argocd: Still creating... [00m50s elapsed][0m[0m
+[0m[1mhelm_release.argocd: Still creating... [01m00s elapsed][0m[0m
+[0m[1mhelm_release.argocd: Still creating... [01m10s elapsed][0m[0m
+[0m[1mhelm_release.argocd: Still creating... [01m20s elapsed][0m[0m
+[0m[1mhelm_release.argocd: Still creating... [01m30s elapsed][0m[0m
+[0m[1mhelm_release.argocd: Still creating... [01m40s elapsed][0m[0m
+[0m[1mhelm_release.argocd: Still creating... [01m50s elapsed][0m[0m
+[0m[1mhelm_release.argocd: Creation complete after 1m59s [id=argocd][0m
+[0m[1mhelm_release.root_app: Creating...[0m[0m
+[0m[1mhelm_release.root_app: Still creating... [00m10s elapsed][0m[0m
+[0m[1mhelm_release.root_app: Creation complete after 17s [id=root-app][0m
+[0m[1m[32m
+Apply complete! Resources: 43 added, 1 changed, 1 destroyed.[0m
+[0m[1m[32m
+Outputs:
+
+[0mkubeconfig_path = "/home/alejandra/.kube/kind-sa-p9.yaml"
+[2026-10-12 15:29:43] Terraform terminado: ArgoCD toma el control
+[2026-10-12 15:29:43] Fase 3: esperando que todas las Applications esten Synced y Healthy
+[2026-10-12 15:29:43] Applications sanas: 0/1
+[2026-10-12 15:30:14] Applications sanas: 0/5
+[2026-10-12 15:30:45] Applications sanas: 0/5
+[2026-10-12 15:31:15] Applications sanas: 0/5
+[2026-10-12 15:31:46] Applications sanas: 0/5
+[2026-10-12 15:32:17] Applications sanas: 0/5
+[2026-10-12 15:32:47] Applications sanas: 0/5
+[2026-10-12 15:33:18] Applications sanas: 0/6
+[2026-10-12 15:33:48] Applications sanas: 1/7
+[2026-10-12 15:34:19] Applications sanas: 2/8
+[2026-10-12 15:34:52] Applications sanas: 2/8
+[2026-10-12 15:35:23] Applications sanas: 4/8
+[2026-10-12 15:35:53] Applications sanas: 4/8
+[2026-10-12 15:36:24] Applications sanas: 4/8
+[2026-10-12 15:36:55] Applications sanas: 5/8
+[2026-10-12 15:37:25] Applications sanas: 5/8
+[2026-10-12 15:37:56] Applications sanas: 5/8
+[2026-10-12 15:38:26] Applications sanas: 5/8
+[2026-10-12 15:38:57] Applications sanas: 6/8
+[2026-10-12 15:39:28] Applications sanas: 6/8
+[2026-10-12 15:39:59] Applications sanas: 6/8
+[2026-10-12 15:40:30] Applications sanas: 6/8
+[2026-10-12 15:41:01] Applications sanas: 6/8
+[2026-10-12 15:41:31] Applications sanas: 6/8
+[2026-10-12 15:42:03] Applications sanas: 7/13
+[2026-10-12 15:42:34] Applications sanas: 7/13
+[2026-10-12 15:43:04] Applications sanas: 7/13
+[2026-10-12 15:43:34] Applications sanas: 7/13
+[2026-10-12 15:44:05] Applications sanas: 8/13
+[2026-10-12 15:44:35] Applications sanas: 9/13
+[2026-10-12 15:45:06] Applications sanas: 13/13
+api-gateway-production Synced Healthy
+appointments-service-production Synced Healthy
+argo-rollouts Synced Healthy
+artists-service-production Synced Healthy
+auth-service-production Synced Healthy
+infra-production Synced Healthy
+kyverno Synced Healthy
+kyverno-policies Synced Healthy
+notification-service-production Synced Healthy
+root-app Synced Healthy
+sealed-secrets Synced Healthy
+secrets-production Synced Healthy
+velero Synced Healthy
+[2026-10-12 15:45:06] Fase 4: cluster nuevo -> restauracion de datos desde el ultimo respaldo anterior al desastre
+[2026-10-12 15:45:06] Esperando que Velero sincronice los respaldos existentes en el bucket
+[2026-10-12 15:45:26] Respaldos programados visibles: 13
+[2026-10-12 15:45:28] Respaldo elegido: velero-production-cada-15min-20261012211526 (iniciado 2026-10-12 15:15:26 hora local)
+[2026-10-12 15:45:28] Pauso la sincronizacion automatica de ArgoCD
+[2026-10-12 15:46:01] Velero restaura PostgreSQL (restore-pg-20261012-154601)
+[2026-10-12 15:47:24] Estado del restore: Completed
+[2026-10-12 15:47:33] Reactivo la sincronizacion automatica de ArgoCD
+[2026-10-12 15:47:34] Datos restaurados: 36 filas en cron_executions, ultima 2026-10-12 15:14:05.335
+[2026-10-12 15:47:34] Fase 4: verificando que todo siga sano tras la restauracion
+[2026-10-12 15:47:34] Applications sanas: 11/13
+[2026-10-12 15:48:05] Applications sanas: 13/13
+api-gateway-production Synced Healthy
+appointments-service-production Synced Healthy
+argo-rollouts Synced Healthy
+artists-service-production Synced Healthy
+auth-service-production Synced Healthy
+infra-production Synced Healthy
+kyverno Synced Healthy
+kyverno-policies Synced Healthy
+notification-service-production Synced Healthy
+root-app Synced Healthy
+sealed-secrets Synced Healthy
+secrets-production Synced Healthy
+velero Synced Healthy
+[2026-10-12 15:48:05] FIN bootstrap: sistema completo en 27 min 8 s
