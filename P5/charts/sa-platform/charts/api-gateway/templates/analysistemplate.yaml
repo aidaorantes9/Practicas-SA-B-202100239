@@ -10,58 +10,58 @@ spec:
   metrics:
     # sin trafico no hay evidencia: un canary que no recibio peticiones no se promueve
     - name: trafico-canary
-      initialDelay: 1m
+      initialDelay: 2m
       interval: 1m
       count: 3
-      failureLimit: 0
+      failureLimit: 1
       successCondition: result[0] >= {{ .Values.analisis.minTrafico }}
       provider:
         prometheus:
           address: {{ .Values.analisis.prometheus }}
           query: |
-            sum(rate(http_request_duration_seconds_count{app="{{ include "api-gateway.name" . }}",rollouts_pod_template_hash="{{`{{args.canary-hash}}`}}"}[1m])) or vector(0)
+            sum(rate(http_request_duration_seconds_count{app="{{ include "api-gateway.name" . }}",rollouts_pod_template_hash="{{`{{args.canary-hash}}`}}"}[2m])) or vector(0)
     - name: tasa-de-error
-      initialDelay: 1m
+      initialDelay: 2m
       interval: 1m
       count: 3
-      failureLimit: 0
+      failureLimit: 1
       successCondition: result[0] <= {{ .Values.analisis.maxTasaError }}
       provider:
         prometheus:
           address: {{ .Values.analisis.prometheus }}
           query: |
             (
-              (sum(rate(http_request_duration_seconds_count{app="{{ include "api-gateway.name" . }}",rollouts_pod_template_hash="{{`{{args.canary-hash}}`}}",status_code=~"5.."}[1m])) or vector(0))
+              (sum(rate(http_request_duration_seconds_count{app="{{ include "api-gateway.name" . }}",rollouts_pod_template_hash="{{`{{args.canary-hash}}`}}",status_code=~"5.."}[2m])) or vector(0))
               /
-              sum(rate(http_request_duration_seconds_count{app="{{ include "api-gateway.name" . }}",rollouts_pod_template_hash="{{`{{args.canary-hash}}`}}"}[1m]))
+              sum(rate(http_request_duration_seconds_count{app="{{ include "api-gateway.name" . }}",rollouts_pod_template_hash="{{`{{args.canary-hash}}`}}"}[2m]))
             ) or vector(0)
     - name: latencia-p95
-      initialDelay: 1m
+      initialDelay: 2m
       interval: 1m
       count: 3
-      failureLimit: 0
+      failureLimit: 1
       successCondition: result[0] <= {{ .Values.analisis.maxLatenciaP95 }}
       provider:
         prometheus:
           address: {{ .Values.analisis.prometheus }}
           query: |
-            histogram_quantile(0.95, sum by (le) (rate(http_request_duration_seconds_bucket{app="{{ include "api-gateway.name" . }}",rollouts_pod_template_hash="{{`{{args.canary-hash}}`}}"}[1m]))) or vector(0)
+            histogram_quantile(0.95, sum by (le) (rate(http_request_duration_seconds_bucket{app="{{ include "api-gateway.name" . }}",rollouts_pod_template_hash="{{`{{args.canary-hash}}`}}"}[2m]))) or vector(0)
     {{- if .Values.analisis.citas }}
     # negocio: GraphQL responde HTTP 200 aunque la operacion falle, asi que se mide el resultado de agendar.
     # Los rechazos (artista ocupado) son reglas del estudio y no cuentan como error.
     - name: citas-con-error
-      initialDelay: 1m
+      initialDelay: 2m
       interval: 1m
       count: 3
-      failureLimit: 0
+      failureLimit: 1
       successCondition: result[0] <= {{ .Values.analisis.maxTasaError }}
       provider:
         prometheus:
           address: {{ .Values.analisis.prometheus }}
           query: |
             (
-              (sum(rate(citas_intentos_total{app="{{ include "api-gateway.name" . }}",rollouts_pod_template_hash="{{`{{args.canary-hash}}`}}",resultado="error"}[1m])) or vector(0))
+              (sum(rate(citas_intentos_total{app="{{ include "api-gateway.name" . }}",rollouts_pod_template_hash="{{`{{args.canary-hash}}`}}",resultado="error"}[2m])) or vector(0))
               /
-              sum(rate(citas_intentos_total{app="{{ include "api-gateway.name" . }}",rollouts_pod_template_hash="{{`{{args.canary-hash}}`}}",resultado=~"exitosa|error"}[1m]))
+              sum(rate(citas_intentos_total{app="{{ include "api-gateway.name" . }}",rollouts_pod_template_hash="{{`{{args.canary-hash}}`}}",resultado=~"exitosa|error"}[2m]))
             ) or vector(0)
     {{- end }}
