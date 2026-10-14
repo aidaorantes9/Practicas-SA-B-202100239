@@ -37,6 +37,11 @@ function toGraphqlType(row) {
   };
 }
 
+// v0.1.8: anticipo sugerido del 30 % segun la tarifa por hora del artista
+function calcularAnticipo(tarifa, minutos) {
+  return Number(((tarifa.porHora * minutos) / 60 * 0.3).toFixed(2));
+}
+
 // logica de crear una cita, sin cambios respecto a P4
 async function crearCita(args, context) {
   // el id del cliente logueado viene en un header que puso el api gateway
@@ -57,6 +62,10 @@ async function crearCita(args, context) {
   if (!disponibilidad.available) {
     throw new RechazoNegocio("ese artista no esta disponible por ahora");
   }
+
+  // v0.1.8: se calcula el anticipo sugerido antes de guardar la cita
+  const anticipoSugerido = calcularAnticipo(disponibilidad.tarifa, args.durationMinutes || 60);
+  logger.info({ artist_id: args.artistId, anticipo_sugerido: anticipoSugerido }, "anticipo sugerido");
 
   // paso extra: revisamos si el artista ya tiene otra cita en ese mismo horario
   // esto evita que dos clientes agenden al mismo artista a la misma hora
