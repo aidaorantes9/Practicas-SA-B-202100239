@@ -53,3 +53,7 @@ secrets:
 cronjobs:
   enabled: true
   image: ghcr.io/aidaorantes9/sa-practica-cronjobs:1.0.0
+
+# P10: sufijo del nombre de los Services de los microservicios en las URLs internas.
+# Vacio = <release>-<servicio>. En GitOps cada servicio se llama <servicio>-production.
+serviciosSufijo: ""
