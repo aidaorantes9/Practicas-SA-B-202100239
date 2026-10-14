@@ -10,6 +10,12 @@ const { createProxyMiddleware } = require("http-proxy-middleware");
 const requireAuth = require("./middleware/requireAuth");
 
 const app = express();
+
+// P10 - observabilidad: latencia, errores y trafico por ruta, metricas en /metrics y logs JSON con trace_id
+const { middlewareMetricas, endpointMetricas } = require("./observabilidad/metricas");
+const logger = require("./observabilidad/logger");
+app.use(middlewareMetricas);
+app.get("/metrics", endpointMetricas);
 const PORT = process.env.PORT || 3000;
 
 const AUTH_SERVICE_URL = process.env.AUTH_SERVICE_URL;
@@ -69,5 +75,5 @@ app.use(
 );
 
 app.listen(PORT, () => {
-  console.log(`api-gateway corriendo en el puerto ${PORT}`);
+  logger.info(`api-gateway corriendo en el puerto ${PORT}`);
 });

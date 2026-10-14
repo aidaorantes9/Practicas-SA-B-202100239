@@ -180,3 +180,8 @@ affinity: {}
 podDisruptionBudget:
   enabled: false
   minAvailable: 1
+
+# P10: variables extra (OpenTelemetry) y ServiceMonitor; se activan en production
+extraEnv: []
+serviceMonitor:
+  enabled: false

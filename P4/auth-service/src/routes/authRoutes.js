@@ -8,6 +8,8 @@ const router = express.Router();
 const User = require("../models/User");
 const { generateToken } = require("../utils/jwt");
 const { requireAuth } = require("../middleware/authMiddleware");
+const { iniciosSesion } = require("../observabilidad/metricas");
+const logger = require("../observabilidad/logger");
 
 const COOKIE_MAX_AGE_MS = parseInt(process.env.JWT_EXPIRES_IN_SECONDS, 10) * 1000;
 
@@ -28,7 +30,7 @@ router.post("/register", async (req, res) => {
     const nuevoUsuario = await User.createUser({ name, email, password, role });
     return res.status(201).json({ message: "usuario creado", id: nuevoUsuario.id });
   } catch (error) {
-    console.error(error);
+    logger.error({ error: error.message }, "error en auth-service");
     return res.status(500).json({ error: "error al registrar usuario" });
   }
 });
@@ -40,14 +42,17 @@ router.post("/login", async (req, res) => {
 
     const user = await User.findByEmail(email);
     if (!user) {
+      iniciosSesion.inc({ resultado: "credenciales_invalidas" });
       return res.status(401).json({ error: "correo o contrasena incorrectos" });
     }
 
     const passwordValido = await bcrypt.compare(password, user.password_hash);
     if (!passwordValido) {
+      iniciosSesion.inc({ resultado: "credenciales_invalidas" });
       return res.status(401).json({ error: "correo o contrasena incorrectos" });
     }
 
+    iniciosSesion.inc({ resultado: "exitoso" });
     const token = generateToken(user);
 
     // guardamos el token en una cookie http only
@@ -60,7 +65,8 @@ router.post("/login", async (req, res) => {
 
     return res.status(200).json({ message: "sesion iniciada", user: User.toSafeObject(user) });
   } catch (error) {
-    console.error(error);
+    iniciosSesion.inc({ resultado: "error" });
+    logger.error({ error: error.message }, "error en auth-service");
     return res.status(500).json({ error: "error al iniciar sesion" });
   }
 });

@@ -47,6 +47,9 @@ spec:
             - secretRef:
                 name: {{ .Values.sharedSecretName | default (printf "%s-app-secrets" .Release.Name) }}
           env:
+            {{- with .Values.extraEnv }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
             - name: PORT
               value: {{ .Values.service.port | quote }}
 

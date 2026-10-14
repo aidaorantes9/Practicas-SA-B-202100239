@@ -51,6 +51,9 @@ spec:
               value: {{ .Values.service.port | quote }}
             - name: DB_NAME
               value: {{ .Values.dbName | default "auth_db" | quote }}
+            {{- with .Values.extraEnv }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}

@@ -1,0 +1,23 @@
+# P10: Prometheus (namespace monitoring) lee /metrics de los servicios instrumentados
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ .Release.Name }}-allow-monitoring-scrape
+  namespace: {{ .Release.Namespace }}
+spec:
+  podSelector:
+    matchExpressions:
+      - key: app.kubernetes.io/name
+        operator: In
+        values: [api-gateway, auth-service, appointments-service]
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: monitoring
+      ports:
+        - {port: 3000, protocol: TCP}
+        - {port: 4000, protocol: TCP}
+        - {port: 4002, protocol: TCP}

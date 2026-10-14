@@ -12,6 +12,12 @@ const schema = require("./schema/typeDefs");
 const rootValue = require("./resolvers/resolvers");
 
 const app = express();
+
+// P10 - observabilidad: latencia, errores y trafico por ruta, metricas en /metrics y logs JSON con trace_id
+const { middlewareMetricas, endpointMetricas } = require("./observabilidad/metricas");
+const logger = require("./observabilidad/logger");
+app.use(middlewareMetricas);
+app.get("/metrics", endpointMetricas);
 const PORT = process.env.PORT || 4002;
 
 app.use(express.json());
@@ -36,10 +42,10 @@ app.use(
 Promise.all([initDb(), connectRabbitMQ()])
   .then(() => {
     app.listen(PORT, () => {
-      console.log(`appointments-service corriendo en el puerto ${PORT}`);
+      logger.info(`appointments-service corriendo en el puerto ${PORT}`);
     });
   })
   .catch((error) => {
-    console.error("appointments-service no pudo iniciar:", error);
+    logger.error("appointments-service no pudo iniciar:", error);
     process.exit(1);
   });
