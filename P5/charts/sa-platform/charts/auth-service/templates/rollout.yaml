@@ -101,9 +101,17 @@ spec:
         - setWeight: 20
         - analysis:
             templates:
-              - templateName: {{ include "auth-service.fullname" . }}-smoke-test
+              - templateName: {{ include "auth-service.fullname" . }}-metricas
+            args:
+              - name: canary-hash
+                valueFrom:
+                  podTemplateHashValue: Latest
         - setWeight: 50
         - analysis:
             templates:
-              - templateName: {{ include "auth-service.fullname" . }}-smoke-test
+              - templateName: {{ include "auth-service.fullname" . }}-metricas
+            args:
+              - name: canary-hash
+                valueFrom:
+                  podTemplateHashValue: Latest
         - setWeight: 100

@@ -185,3 +185,11 @@ podDisruptionBudget:
 extraEnv: []
 serviceMonitor:
   enabled: false
+
+# P10: umbrales del analisis del canary, medidos en Prometheus sobre la version candidata
+analisis:
+  prometheus: http://monitoring-kube-prometheus-prometheus.monitoring.svc:9090
+  minTrafico: 0.05
+  maxTasaError: 0.05
+  maxLatenciaP95: 0.5
+  citas: true

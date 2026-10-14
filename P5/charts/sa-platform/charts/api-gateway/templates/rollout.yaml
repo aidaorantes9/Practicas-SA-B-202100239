@@ -100,9 +100,17 @@ spec:
         - setWeight: 20
         - analysis:
             templates:
-              - templateName: {{ include "api-gateway.fullname" . }}-smoke-test
+              - templateName: {{ include "api-gateway.fullname" . }}-metricas
+            args:
+              - name: canary-hash
+                valueFrom:
+                  podTemplateHashValue: Latest
         - setWeight: 50
         - analysis:
             templates:
-              - templateName: {{ include "api-gateway.fullname" . }}-smoke-test
+              - templateName: {{ include "api-gateway.fullname" . }}-metricas
+            args:
+              - name: canary-hash
+                valueFrom:
+                  podTemplateHashValue: Latest
         - setWeight: 100
