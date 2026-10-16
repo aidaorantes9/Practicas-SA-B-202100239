@@ -1,0 +1,48 @@
+# Prueba de restauracion de PostgreSQL con Velero, 2026-10-15 19:41:00
+== schedule de produccion con defaultVolumesToFsBackup ==
+true
+== respaldos ==
+time="2026-10-15T19:41:01-06:00" level=info msg="No Schedule.template.metadata.labels set - using Schedule.labels for backup object" backup=velero/verificacion-prod-20261015 labels="map[app.kubernetes.io/instance:velero app.kubernetes.io/managed-by:Helm app.kubernetes.io/name:velero app.kubernetes.io/version:1.18.2 helm.sh/chart:velero-12.2.1]"
+Creating backup from schedule, all other filters are ignored.
+Backup request "verificacion-prod-20261015" submitted successfully.
+Waiting for backup to complete. You may safely press ctrl-c to stop waiting - your backup will continue in the background.
+.........................................................................................................................................................................................................................................................................................................................................................................................................
+Backup completed with status: Completed. You may check for more information using the commands `velero backup describe verificacion-prod-20261015` and `velero backup logs verificacion-prod-20261015`.
+time="2026-10-15T19:47:34-06:00" level=info msg="No Schedule.template.metadata.labels set - using Schedule.labels for backup object" backup=velero/verificacion-llave-20261015 labels="map[app.kubernetes.io/instance:velero app.kubernetes.io/managed-by:Helm app.kubernetes.io/name:velero app.kubernetes.io/version:1.18.2 helm.sh/chart:velero-12.2.1]"
+Creating backup from schedule, all other filters are ignored.
+Backup request "verificacion-llave-20261015" submitted successfully.
+Waiting for backup to complete. You may safely press ctrl-c to stop waiting - your backup will continue in the background.
+.....
+Backup completed with status: Completed. You may check for more information using the commands `velero backup describe verificacion-llave-20261015` and `velero backup logs verificacion-llave-20261015`.
+NAME                                          STATUS      ERRORS   WARNINGS   CREATED                         EXPIRES   STORAGE LOCATION   QUEUE POSITION   SELECTOR
+velero-production-cada-15min-20261016013042   Completed   0        0          2026-10-15 19:30:42 -0600 CST   2d        default                             <none>
+velero-production-cada-15min-20261016011542   Completed   0        0          2026-10-15 19:15:42 -0600 CST   2d        default                             <none>
+velero-production-cada-15min-20261016010042   Completed   0        0          2026-10-15 19:00:42 -0600 CST   2d        default                             <none>
+  Pod Volume Backups - kopia:
+    Completed:
+      production/api-gateway-production-58676fdb4b-8569d: tmp
+      production/api-gateway-production-58676fdb4b-86wz9: tmp
+      production/appointments-service-production-79ddfb7974-dzrqf: tmp
+      production/appointments-service-production-79ddfb7974-wxzzz: tmp
+      production/artists-service-production-689745b9b9-f7lnz: tmp
+      production/artists-service-production-689745b9b9-lfppq: tmp
+      production/auth-service-production-6b8b4cffcf-7f7jw: tmp
+  v1/Secret:
+    - kube-system/sealed-secrets-key-restaurada
+
+Backup Volumes:
+== restauracion en un namespace aparte ==
+namespace/restauracion-prueba created
+secret/sa-p8-app-secrets created
+Restore request "verificacion-restauracion-20261015" submitted successfully.
+Waiting for restore to complete. You may safely press ctrl-c to stop waiting - your restore will continue in the background.
+................................................................................................................................................................
+Restore completed with status: Completed. You may check for more information using the commands `velero restore describe verificacion-restauracion-20261015` and `velero restore logs verificacion-restauracion-20261015`.
+Phase:                       [32mCompleted[0m
+Items restored:              15
+Completed:  2026-10-15 19:50:24 -0600 CST
+  Completed:  3
+pod/sa-p8-postgresql-0 condition met
+== verificacion de los datos (citas) ==
+production: total, ultimo_id = 5101|5101
+restauracion-prueba: total, ultimo_id = 5094|5094
