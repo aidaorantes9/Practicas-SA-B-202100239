@@ -1,42 +1,35 @@
+# P10 - artists-service y notification-service no exponen /metrics (no estan instrumentados), pero
+# Prometheus sabe por kube-state-metrics si el pod canary quedo listo y si se reinicio.
+# Sin Job: el analisis se consulta en Prometheus y filtra por el hash del pod canary.
 apiVersion: argoproj.io/v1alpha1
 kind: AnalysisTemplate
 metadata:
-  name: {{ include "artists-service.fullname" . }}-smoke-test
+  name: {{ include "artists-service.fullname" . }}-metricas
 spec:
+  args:
+    - name: canary-hash
   metrics:
-    - name: smoke-test-health
-      count: 1
+    # el pod canary debe estar listo (readiness OK) durante todo el analisis
+    - name: canary-listo
+      initialDelay: 1m
+      interval: 1m
+      count: 3
+      failureLimit: 1
+      successCondition: result[0] >= 1
       provider:
-        job:
-          spec:
-            backoffLimit: 0
-            template:
-              metadata:
-                labels:
-                  role: smoke-test
-              spec:
-                restartPolicy: Never
-                securityContext:
-                  runAsNonRoot: true
-                  runAsUser: 100
-                containers:
-                  - name: smoke-test
-                    image: curlimages/curl:8.10.1
-                    securityContext:
-                      runAsNonRoot: true
-                      runAsUser: 100
-                    resources:
-                      requests:
-                        cpu: 50m
-                        memory: 32Mi
-                      limits:
-                        cpu: 100m
-                        memory: 64Mi
-                    command:
-                      - sh
-                      - -c
-                      - |
-                        for i in 1 2 3 4 5; do
-                          curl -sf http://{{ include "artists-service.fullname" . }}:{{ .Values.service.port }}/health || exit 1
-                          sleep 2
-                        done
+        prometheus:
+          address: {{ ((.Values.analisis | default dict).prometheus) | default "http://monitoring-kube-prometheus-prometheus.monitoring.svc:9090" }}
+          query: |
+            sum(kube_pod_status_ready{namespace="{{ .Release.Namespace }}",condition="true",pod=~"{{ include "artists-service.fullname" . }}-{{`{{args.canary-hash}}`}}-.*"}) or vector(0)
+    # un canary que se reinicia (CrashLoop, OOM) no se promueve
+    - name: reinicios-canary
+      initialDelay: 1m
+      interval: 1m
+      count: 3
+      failureLimit: 1
+      successCondition: result[0] <= 0
+      provider:
+        prometheus:
+          address: {{ ((.Values.analisis | default dict).prometheus) | default "http://monitoring-kube-prometheus-prometheus.monitoring.svc:9090" }}
+          query: |
+            sum(kube_pod_container_status_restarts_total{namespace="{{ .Release.Namespace }}",pod=~"{{ include "artists-service.fullname" . }}-{{`{{args.canary-hash}}`}}-.*"}) or vector(0)

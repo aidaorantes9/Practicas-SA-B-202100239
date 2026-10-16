@@ -98,9 +98,17 @@ spec:
         - setWeight: 20
         - analysis:
             templates:
-              - templateName: {{ include "notification-service.fullname" . }}-smoke-test
+              - templateName: {{ include "notification-service.fullname" . }}-metricas
+            args:
+              - name: canary-hash
+                valueFrom:
+                  podTemplateHashValue: Latest
         - setWeight: 50
         - analysis:
             templates:
-              - templateName: {{ include "notification-service.fullname" . }}-smoke-test
+              - templateName: {{ include "notification-service.fullname" . }}-metricas
+            args:
+              - name: canary-hash
+                valueFrom:
+                  podTemplateHashValue: Latest
         - setWeight: 100
