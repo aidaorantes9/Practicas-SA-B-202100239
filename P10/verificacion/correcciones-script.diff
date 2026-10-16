@@ -1,0 +1,38 @@
+179c179
+< NAT=$(echo "${ATJSON:-{}}" | jq '[.items[]?] | length' 2>/dev/null || echo 0)
+---
+> NAT=$(echo "${ATJSON:-"{}"}" | jq '[.items[]?] | length' 2>/dev/null || echo 0)
+181c181
+< if echo "${ATJSON:-{}}" | jq -e '.items[]?.spec.metrics[]?.provider.prometheus' >/dev/null 2>&1; then
+---
+> if echo "${ATJSON:-"{}"}" | jq -e '.items[]?.spec.metrics[]?.provider.prometheus' >/dev/null 2>&1; then
+183c183
+<   if echo "${ATJSON:-{}}" | jq -e '.items[]?.spec.metrics[]? | select(.provider.job)' >/dev/null 2>&1; then
+---
+>   if echo "${ATJSON:-"{}"}" | jq -e '.items[]?.spec.metrics[]? | select(.provider.job)' >/dev/null 2>&1; then
+190c190
+< mapfile -t CONSULTAS < <(echo "${ATJSON:-{}}" | jq -r '.items[]?.spec.metrics[]?.provider.prometheus.query // empty' 2>/dev/null)
+---
+> mapfile -t CONSULTAS < <(echo "${ATJSON:-"{}"}" | jq -r '.items[]?.spec.metrics[]?.provider.prometheus.query // empty' 2>/dev/null)
+199c199
+<    | jq -e '.spec.strategy.canary.steps[]?.analysis' >/dev/null 2>&1; then
+---
+>    | jq -e '[.spec.strategy.canary.steps[]?.analysis] | any' >/dev/null 2>&1; then
+226,227c226,227
+< NREC=$(echo "${PRJSON:-{}}" | jq '[.items[]?.spec.groups[]?.rules[]? | select(.record)] | length' 2>/dev/null || echo 0)
+< NALE=$(echo "${PRJSON:-{}}" | jq '[.items[]?.spec.groups[]?.rules[]? | select(.alert)] | length' 2>/dev/null || echo 0)
+---
+> NREC=$(echo "${PRJSON:-"{}"}" | jq '[.items[]?.spec.groups[]?.rules[]? | select(.record)] | length' 2>/dev/null || echo 0)
+> NALE=$(echo "${PRJSON:-"{}"}" | jq '[.items[]?.spec.groups[]?.rules[]? | select(.alert)] | length' 2>/dev/null || echo 0)
+238c238
+< if echo "${PRJSON:-{}}" | jq -r '.items[]?.spec.groups[]?.rules[]? | select(.alert) | .expr' 2>/dev/null \
+---
+> if echo "${PRJSON:-"{}"}" | jq -r '.items[]?.spec.groups[]?.rules[]? | select(.alert) | .expr' 2>/dev/null \
+244c244
+< if echo "${PRJSON:-{}}" | jq -e '.items[]?.spec.groups[]?.rules[]?.annotations
+---
+> if echo "${PRJSON:-"{}"}" | jq -e '.items[]?.spec.groups[]?.rules[]? | select(.alert) | (.annotations // {})
+264c264
+<   echo "${DS:-}" | grep -qi "type: *$t" && TIPOS=$((TIPOS+1))
+---
+>   grep -qi "type: *$t" <<< "${DS:-}" && TIPOS=$((TIPOS+1))

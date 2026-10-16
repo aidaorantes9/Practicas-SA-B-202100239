@@ -1,0 +1,137 @@
+================================================================
+ VERIFICACION PRACTICA 10 - v1.0
+ Carnet: 202100239        Fecha: 2026-10-15 18:14
+ Hash del script: 426173dee2129930
+================================================================
+
+--- 0. Herramientas y contexto (debe verificarlo el auxiliar)
+  [OK]    Todas las herramientas presentes
+  Contexto de kubectl: kind-sa-p9
+  [OK]    Acceso al cluster confirmado
+
+--- 1. Repositorios
+  [OK]    Repositorio de codigo accesible
+  [OK]    Repositorio GitOps accesible
+  [OK]    Carpeta /P10 presente
+  [OK]    README de entrega presente
+
+--- 2. Conexion con Prometheus
+  [OK]    Servicio de Prometheus encontrado: prometheus-operated
+  [OK]    La API de Prometheus responde
+
+--- 2.1 Instrumentacion y correlacion (14 pts)
+  Servicios declarados: 3   con rastro de OpenTelemetry: 3
+  [OK]    Tres o mas servicios instrumentados
+  [OK]    Collector de OpenTelemetry desplegado
+  [OK]    Se evidencia propagacion de contexto
+  [OK]    Metrica de negocio presente en Prometheus: citas_intentos_total
+  >> 2.1 = 14 / 14
+
+--- 2.2 Canary gobernado por metricas (16 pts)
+  AnalysisTemplates en production: 5
+  [OK]    El analisis usa provider prometheus
+  Consultas declaradas: 44
+    sum(rate(http_request_duration_seconds_count{app="api-gateway",rollouts_pod_template_hash="{{args.canary-hash}
+     
+    ( 
+      (sum(rate(http_request_duration_seconds_count{app="api-gateway",rollouts_pod_template_hash="{{args.canary-ha
+      / 
+      sum(rate(http_request_duration_seconds_count{app="api-gateway",rollouts_pod_template_hash="{{args.canary-has
+    ) or vector(0) 
+     
+    histogram_quantile(0.95, sum by (le) (rate(http_request_duration_seconds_bucket{app="api-gateway",rollouts_pod
+     
+    sum(rate(http_request_duration_seconds_count{app="appointments-service",rollouts_pod_template_hash="{{args.can
+     
+    ( 
+      (sum(rate(http_request_duration_seconds_count{app="appointments-service",rollouts_pod_template_hash="{{args.
+      / 
+      sum(rate(http_request_duration_seconds_count{app="appointments-service",rollouts_pod_template_hash="{{args.c
+    ) or vector(0) 
+     
+    histogram_quantile(0.95, sum by (le) (rate(http_request_duration_seconds_bucket{app="appointments-service",rol
+     
+    ( 
+      (sum(rate(citas_intentos_total{app="appointments-service",rollouts_pod_template_hash="{{args.canary-hash}}",
+      / 
+      sum(rate(citas_intentos_total{app="appointments-service",rollouts_pod_template_hash="{{args.canary-hash}}",r
+    ) or vector(0) 
+     
+    sum(kube_pod_status_ready{namespace="production",condition="true",pod=~"artists-service-production-{{args.cana
+     
+    sum(kube_pod_container_status_restarts_total{namespace="production",pod=~"artists-service-production-{{args.ca
+     
+    sum(rate(http_request_duration_seconds_count{app="auth-service",rollouts_pod_template_hash="{{args.canary-hash
+     
+    ( 
+      (sum(rate(http_request_duration_seconds_count{app="auth-service",rollouts_pod_template_hash="{{args.canary-h
+      / 
+      sum(rate(http_request_duration_seconds_count{app="auth-service",rollouts_pod_template_hash="{{args.canary-ha
+    ) or vector(0) 
+     
+    histogram_quantile(0.95, sum by (le) (rate(http_request_duration_seconds_bucket{app="auth-service",rollouts_po
+     
+    sum(kube_pod_status_ready{namespace="production",condition="true",pod=~"notification-service-production-{{args
+     
+    sum(kube_pod_container_status_restarts_total{namespace="production",pod=~"notification-service-production-{{ar
+     
+  [OK]    Las consultas distinguen el trafico del canary
+  [OK]    La promocion esta condicionada al analisis
+  [OK]    Al menos una consulta devuelve datos reales
+  [OK]    Evidencia de reversion por metricas: 11 AnalysisRun fallido(s)
+    run=api-gateway-production-7fc986c475-2-1 fase=Failed
+    run=api-gateway-production-7fc986c475-2-1.1 fase=Failed
+    run=api-gateway-production-7fc986c475-2-1.2 fase=Failed
+  >> 2.2 = 16 / 16
+
+--- 2.3 SLO y alertas por presupuesto de error (12 pts)
+  Reglas de registro: 26   reglas de alerta: 4
+  [OK]    Existen reglas de registro
+  [OK]    El indicador se calcula y devuelve datos: slo:citas_sli:ratio_rate7d
+  [OK]    Existen reglas de alerta
+  [OK]    Alertas basadas en consumo del presupuesto
+  [OK]    Las alertas enlazan a un runbook
+  >> 2.3 = 12 / 12
+
+--- 2.4 Recorrido del sintoma a la causa (10 pts)
+  Pods en monitoring: 9
+  [OK]    Almacen de registros desplegado
+  Origenes de datos detectados en Grafana: 3
+  [OK]    Grafana con metricas, registros y trazas
+  [OK]    Backend de trazas desplegado
+  [AVISO] Confirmar en la demostracion que contiene trazas recientes
+  >> 2.4 = 10 / 10
+
+--- 2.5 Registros estructurados (8 pts)
+  [OK]    Los registros salen en JSON valido
+    {"level":"info","time":"2026-10-16T00:15:00.983Z","service":"appointments-service","trace_id":"ef7b57712878cb9c931f5aa85
+  [OK]    El registro incluye identificador de traza
+  [OK]    Los registros se centralizan en un almacen consultable
+  [AVISO] Confirmar en la demostracion una consulta real por campo
+  >> 2.5 = 8 / 8
+
+--- Comprobaciones informativas
+  [OK]    Tablero exportado presente en el repositorio
+  [OK]    Runbooks presentes
+  [OK]    El informe menciona SLO y presupuesto
+  [OK]    El stack se despliega por GitOps
+
+================================================================
+ RESUMEN - carnet 202100239
+================================================================
+  2.1 Instrumentacion y correlacion ... 14 / 14
+  2.2 Canary por metricas ............. 16 / 16
+  2.3 SLO y alertas ................... 12 / 12
+  2.4 Sintoma a la causa .............. 10 / 10
+  2.5 Registros estructurados .........  8 / 8
+  ----------------------------------------------
+  CONOCIMIENTO ........................ 60 / 60
+
+  Pendiente de evaluacion presencial: 40 pts
+    1.1 SLO (10)   1.2 Tablero (8)
+    1.3 Informe de operacion (12)   1.4 Preguntas teoricas (10)
+
+  Requisitos eliminatorios: todos cumplidos
+
+  Duracion: 12s    Reporte: reporte_p10_202100239.txt
+================================================================
