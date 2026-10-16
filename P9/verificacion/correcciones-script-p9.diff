@@ -1,0 +1,26 @@
+174c174
+< NSCH=$(echo "${SCHED:-{}}" | jq '[.items[]?] | length' 2>/dev/null || echo 0)
+---
+> NSCH=$(echo "${SCHED:-"{}"}" | jq '[.items[]?] | length' 2>/dev/null || echo 0)
+185c185
+< NOK=$(echo "${BK:-{}}" | jq '[.items[]? | select(.status.phase=="Completed")] | length' 2>/dev/null || echo 0)
+---
+> NOK=$(echo "${BK:-"{}"}" | jq '[.items[]? | select(.status.phase=="Completed")] | length' 2>/dev/null || echo 0)
+194,195c194,195
+< echo "${BSL:-{}}" | jq -r 2>/dev/null '.items[]? | "  destino: provider=\(.spec.provider) bucket=\(.spec.objectStorage.bucket // "?") estado=\(.status.phase // "?")"' 2>/dev/null
+< echo "${BSL:-{}}" | jq -e '.items[]? | select(.spec.provider != "" and (.spec.objectStorage.bucket // "") != "")' >/dev/null 2>&1 \
+---
+> echo "${BSL:-"{}"}" | jq -r 2>/dev/null '.items[]? | "  destino: provider=\(.spec.provider) bucket=\(.spec.objectStorage.bucket // "?") estado=\(.status.phase // "?")"' 2>/dev/null
+> echo "${BSL:-"{}"}" | jq -e '.items[]? | select(.spec.provider != "" and (.spec.objectStorage.bucket // "") != "")' >/dev/null 2>&1 \
+198c198
+< echo "${BK:-{}}" | jq -e '.items[]? | select((.spec.defaultVolumesToFsBackup == true) or (.spec.snapshotVolumes == true) or (.status.volumeSnapshotsAttempted // 0) > 0)' >/dev/null 2>&1 \
+---
+> echo "${BK:-"{}"}" | jq -e '.items[]? | select((.spec.defaultVolumesToFsBackup == true) or (.spec.snapshotVolumes == true) or (.status.volumeSnapshotsAttempted // 0) > 0)' >/dev/null 2>&1 \
+229c229
+<   echo "${BK:-{}}" | jq -e '.items[]? | select((.spec.includedNamespaces // []) | index("kube-system") or index("sealed-secrets"))' >/dev/null 2>&1 \
+---
+>   echo "${BK:-"{}"}" | jq -e '.items[]? | select((.spec.includedNamespaces // []) | index("kube-system") or index("sealed-secrets"))' >/dev/null 2>&1 \
+263c263
+< NRS=$(echo "${RS:-{}}" | jq '[.items[]? | select(.status.phase=="Completed" or .status.phase=="PartiallyFailed")] | length' 2>/dev/null || echo 0)
+---
+> NRS=$(echo "${RS:-"{}"}" | jq '[.items[]? | select(.status.phase=="Completed" or .status.phase=="PartiallyFailed")] | length' 2>/dev/null || echo 0)
