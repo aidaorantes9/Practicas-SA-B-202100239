@@ -1,0 +1,216 @@
+# AnalysisRun fallido del fallo inducido v0.1.8 (P10)
+# PR #4 fusionado a las 15:42:20; Rollout abortado a las 15:47:41 (5 min 21 s)
+
+Name:            appointments-service-production
+Namespace:       production
+Status:          ✖ Degraded
+Message:         RolloutAborted: Rollout aborted update to revision 3: Step-based analysis phase error/failed: Metric "citas-con-error" assessed Failed due to failed (2) > failureLimit (1)
+Strategy:        Canary
+  Step:          0/5
+  SetWeight:     0
+  ActualWeight:  0
+Images:          ghcr.io/aidaorantes9/sa-practica-appointments-service:v0.1.7 (stable)
+Replicas:
+  Desired:       2
+  Current:       2
+  Updated:       0
+  Ready:         2
+  Available:     2
+
+NAME                                                         KIND         STATUS        AGE    INFO
+⟳ appointments-service-production                            Rollout      ✖ Degraded    2d     
+├──# revision:3                                                                                
+│  ├──⧉ appointments-service-production-cd744f5ff            ReplicaSet   • ScaledDown  8m11s  canary
+│  └──α appointments-service-production-cd744f5ff-3-1        AnalysisRun  ✖ Failed      6m9s   ✔ 6,✖ 2
+├──# revision:2                                                                                
+│  ├──⧉ appointments-service-production-79ddfb7974           ReplicaSet   ✔ Healthy     101m   stable
+│  │  ├──□ appointments-service-production-79ddfb7974-cp8z5  Pod          ✔ Running     29m    ready:1/1
+│  │  └──□ appointments-service-production-79ddfb7974-vd8dn  Pod          ✔ Running     28m    ready:1/1
+│  ├──α appointments-service-production-79ddfb7974-2-1       AnalysisRun  ✖ Failed      100m   ✔ 3,✖ 1
+│  ├──α appointments-service-production-79ddfb7974-2-1.1     AnalysisRun  ✖ Failed      95m    ✔ 3,✖ 1
+│  ├──α appointments-service-production-79ddfb7974-2-1.2     AnalysisRun  ✖ Failed      84m    ✔ 6,✖ 2
+│  ├──α appointments-service-production-79ddfb7974-2-1.3     AnalysisRun  ✔ Successful  63m    ✔ 12
+│  └──α appointments-service-production-79ddfb7974-2-3       AnalysisRun  ✔ Successful  59m    ✔ 12
+└──# revision:1                                                                                
+   └──⧉ appointments-service-production-5dcfbfcd9f           ReplicaSet   • ScaledDown  2d     
+
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisRun
+metadata:
+  annotations:
+    rollout.argoproj.io/revision: "3"
+  creationTimestamp: "2026-10-14T21:44:32Z"
+  generation: 5
+  labels:
+    app.kubernetes.io/instance: appointments-service-production
+    app.kubernetes.io/name: appointments-service
+    rollout-type: Step
+    rollouts-pod-template-hash: cd744f5ff
+    step-index: "1"
+  name: appointments-service-production-cd744f5ff-3-1
+  namespace: production
+  ownerReferences:
+  - apiVersion: argoproj.io/v1alpha1
+    blockOwnerDeletion: true
+    controller: true
+    kind: Rollout
+    name: appointments-service-production
+    uid: 4f79978a-c2b3-4b2b-bd85-07d7b3df3aa9
+  resourceVersion: "158295"
+  uid: 87c0c782-64b8-49d5-a391-d2f701fe6a34
+spec:
+  args:
+  - name: canary-hash
+    value: cd744f5ff
+  metrics:
+  - count: 3
+    failureLimit: 1
+    initialDelay: 2m
+    interval: 1m
+    name: trafico-canary
+    provider:
+      prometheus:
+        address: http://monitoring-kube-prometheus-prometheus.monitoring.svc:9090
+        authentication:
+          oauth2: {}
+          sigv4: {}
+        query: |
+          sum(rate(http_request_duration_seconds_count{app="appointments-service",rollouts_pod_template_hash="{{args.canary-hash}}"}[2m])) or vector(0)
+    successCondition: result[0] >= 0.05
+  - count: 3
+    failureLimit: 1
+    initialDelay: 2m
+    interval: 1m
+    name: tasa-de-error
+    provider:
+      prometheus:
+        address: http://monitoring-kube-prometheus-prometheus.monitoring.svc:9090
+        authentication:
+          oauth2: {}
+          sigv4: {}
+        query: |
+          (
+            (sum(rate(http_request_duration_seconds_count{app="appointments-service",rollouts_pod_template_hash="{{args.canary-hash}}",status_code=~"5.."}[2m])) or vector(0))
+            /
+            sum(rate(http_request_duration_seconds_count{app="appointments-service",rollouts_pod_template_hash="{{args.canary-hash}}"}[2m]))
+          ) or vector(0)
+    successCondition: result[0] <= 0.05
+  - count: 3
+    failureLimit: 1
+    initialDelay: 2m
+    interval: 1m
+    name: latencia-p95
+    provider:
+      prometheus:
+        address: http://monitoring-kube-prometheus-prometheus.monitoring.svc:9090
+        authentication:
+          oauth2: {}
+          sigv4: {}
+        query: |
+          histogram_quantile(0.95, sum by (le) (rate(http_request_duration_seconds_bucket{app="appointments-service",rollouts_pod_template_hash="{{args.canary-hash}}"}[2m]))) or vector(0)
+    successCondition: result[0] <= 0.5
+  - count: 3
+    failureLimit: 1
+    initialDelay: 2m
+    interval: 1m
+    name: citas-con-error
+    provider:
+      prometheus:
+        address: http://monitoring-kube-prometheus-prometheus.monitoring.svc:9090
+        authentication:
+          oauth2: {}
+          sigv4: {}
+        query: |
+          (
+            (sum(rate(citas_intentos_total{app="appointments-service",rollouts_pod_template_hash="{{args.canary-hash}}",resultado="error"}[2m])) or vector(0))
+            /
+            sum(rate(citas_intentos_total{app="appointments-service",rollouts_pod_template_hash="{{args.canary-hash}}",resultado=~"exitosa|error"}[2m]))
+          ) or vector(0)
+    successCondition: result[0] <= 0.05
+status:
+  completedAt: "2026-10-14T21:47:32Z"
+  dryRunSummary: {}
+  message: Metric "citas-con-error" assessed Failed due to failed (2) > failureLimit
+    (1)
+  metricResults:
+  - consecutiveSuccess: 2
+    count: 2
+    measurements:
+    - finishedAt: "2026-10-14T21:46:32Z"
+      phase: Successful
+      startedAt: "2026-10-14T21:46:32Z"
+      value: '[0]'
+    - finishedAt: "2026-10-14T21:47:32Z"
+      phase: Successful
+      startedAt: "2026-10-14T21:47:32Z"
+      value: '[0]'
+    metadata:
+      ResolvedPrometheusQuery: |
+        (
+          (sum(rate(http_request_duration_seconds_count{app="appointments-service",rollouts_pod_template_hash="cd744f5ff",status_code=~"5.."}[2m])) or vector(0))
+          /
+          sum(rate(http_request_duration_seconds_count{app="appointments-service",rollouts_pod_template_hash="cd744f5ff"}[2m]))
+        ) or vector(0)
+    name: tasa-de-error
+    phase: Successful
+    successful: 2
+  - count: 2
+    failed: 2
+    measurements:
+    - finishedAt: "2026-10-14T21:46:32Z"
+      phase: Failed
+      startedAt: "2026-10-14T21:46:32Z"
+      value: '[1]'
+    - finishedAt: "2026-10-14T21:47:32Z"
+      phase: Failed
+      startedAt: "2026-10-14T21:47:32Z"
+      value: '[1]'
+    metadata:
+      ResolvedPrometheusQuery: |
+        (
+          (sum(rate(citas_intentos_total{app="appointments-service",rollouts_pod_template_hash="cd744f5ff",resultado="error"}[2m])) or vector(0))
+          /
+          sum(rate(citas_intentos_total{app="appointments-service",rollouts_pod_template_hash="cd744f5ff",resultado=~"exitosa|error"}[2m]))
+        ) or vector(0)
+    name: citas-con-error
+    phase: Failed
+  - consecutiveSuccess: 2
+    count: 2
+    measurements:
+    - finishedAt: "2026-10-14T21:46:32Z"
+      phase: Successful
+      startedAt: "2026-10-14T21:46:32Z"
+      value: '[0.22236663783160315]'
+    - finishedAt: "2026-10-14T21:47:32Z"
+      phase: Successful
+      startedAt: "2026-10-14T21:47:32Z"
+      value: '[0.1262500000000001]'
+    metadata:
+      ResolvedPrometheusQuery: |
+        histogram_quantile(0.95, sum by (le) (rate(http_request_duration_seconds_bucket{app="appointments-service",rollouts_pod_template_hash="cd744f5ff"}[2m]))) or vector(0)
+    name: latencia-p95
+    phase: Successful
+    successful: 2
+  - consecutiveSuccess: 2
+    count: 2
+    measurements:
+    - finishedAt: "2026-10-14T21:46:32Z"
+      phase: Successful
+      startedAt: "2026-10-14T21:46:32Z"
+      value: '[0.2944433333333334]'
+    - finishedAt: "2026-10-14T21:47:32Z"
+      phase: Successful
+      startedAt: "2026-10-14T21:47:32Z"
+      value: '[0.3142857142857143]'
+    metadata:
+      ResolvedPrometheusQuery: |
+        sum(rate(http_request_duration_seconds_count{app="appointments-service",rollouts_pod_template_hash="cd744f5ff"}[2m])) or vector(0)
+    name: trafico-canary
+    phase: Successful
+    successful: 2
+  phase: Failed
+  runSummary:
+    count: 4
+    failed: 1
+    successful: 3
+  startedAt: "2026-10-14T21:44:32Z"
