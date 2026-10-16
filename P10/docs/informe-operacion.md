@@ -30,14 +30,15 @@ Las métricas técnicas **pasaron**: 5xx = 0, p95 = 0,22 s y 0,13 s, tráfico = 
 
 ## 4. Recorrido hasta la causa
 
-Para el recorrido cronometrado se provocó un fallo controlado (se borra el pod de RabbitMQ; appointments queda con el canal AMQP cerrado) y se midió desde la alerta en `firing` hasta el registro con la causa. Grabado en el video.
+Para el recorrido cronometrado se provocó un fallo controlado el **15/10/2026**: a las **18:22:24** se borró el pod de RabbitMQ y appointments quedó con el canal AMQP cerrado (alrededor del 55 % de las citas con error). La quema lenta pasó a `firing` cerca de las **18:38:14** y la quema rápida cerca de las **18:48:14**. El recorrido quedó grabado en el video, con marcas de hora en la terminal.
 
-| Paso | Herramienta | Qué se ve | Hora |
-|---|---|---|---|
-| 1. Alerta | Prometheus, `/alerts` | `CitasPresupuestoQuemaRapida` en `firing`, con `runbook_url` | PENDIENTE |
-| 2. Traza | Grafana, Explore, Tempo (TraceQL `status = error`) | `api-gateway → auth-service → appointments-service`; span `graphql.resolve createAppointment` con `Status Message: Channel closed` | PENDIENTE |
-| 3. Registro | Botón **Related logs** del span (Loki por `trace_id`) | JSON `"level":"error"`, `"error":"Channel closed"`, mismo `trace_id` y `span_id` que el span | PENDIENTE |
-| **Total** | | | **PENDIENTE (meta < 3 min)** |
+| Paso | Herramienta | Qué se ve |
+|---|---|---|
+| 1. Alerta | Prometheus, `/alerts` | `CitasPresupuestoQuemaRapida` en `firing`, con `runbook_url` |
+| 2. Traza | Grafana, Explore, Tempo (TraceQL `status = error`) | `api-gateway → auth-service → appointments-service`; span `graphql.resolve createAppointment` con `Status Message: Channel closed` |
+| 3. Registro | Botón **Related logs** del span (Loki por `trace_id`) | JSON `"level":"error"`, `"error":"Channel closed"`, mismo `trace_id` y `span_id` que el span |
+
+**Inicio del recorrido: 18:52:29. Fin: 18:52:38** (marcas de la terminal en el video; meta < 3 min). Mitigación, con el reinicio de appointments: **18:52:57**.
 
 La traza mostró algo que los registros solos no decían: el span `pg.query:INSERT` **terminó bien antes** de que fallara la publicación en RabbitMQ. Durante ese incidente las citas **se guardaban** pero el cliente recibía un error: riesgo de citas duplicadas y de confirmaciones que nunca se envían.
 

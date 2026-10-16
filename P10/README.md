@@ -17,8 +17,8 @@ El estudio de tatuajes de las prácticas anteriores ahora se observa con las tre
 | Ruta del PrometheusRule | `observabilidad/slo-reglas.yaml` del repo GitOps (`PrometheusRule` `slo-estudio-tatuajes`, namespace `monitoring`) |
 | Ruta del JSON del tablero | `P10/tablero/tablero-senales-de-oro.json` (fuente: `P10/tablero/generar-tablero.py`). En GitOps: `observabilidad/tablero-senales-de-oro.json`, cargado como ConfigMap por Kustomize |
 | AnalysisRun fallido y Rollout | `appointments-service-production-cd744f5ff-3-1` del Rollout `appointments-service-production`: `v0.1.8` abortada por `citas-con-error` (2 mediciones con valor 1 > `failureLimit: 1`). Evidencia: `P10/evidencias/analysisrun-fallido-v018.txt` |
-| Recorrido síntoma a causa (ruta y tiempo) | Alerta `CitasPresupuestoQuemaRapida` en Prometheus → traza en Tempo (span `graphql.resolve createAppointment`, `Channel closed`) → **Related logs** en Loki por `trace_id`. Tiempo: PENDIENTE. Detalle en el [informe](docs/informe-operacion.md#4-recorrido-hasta-la-causa) |
-| Video (URL y minutaje) | PENDIENTE |
+| Recorrido síntoma a causa (ruta y tiempo) | Alerta `CitasPresupuestoQuemaRapida` en Prometheus → traza en Tempo (span `graphql.resolve createAppointment`, `Channel closed`) → **Related logs** en Loki por `trace_id`. Inicio 18:52:29 y fin 18:52:38 del 15/10/2026, marcados en la terminal durante el video. Detalle en el [informe](docs/informe-operacion.md#4-recorrido-hasta-la-causa) |
+| Video (URL y contenido) | [Carpeta de Drive](https://drive.google.com/drive/folders/1mUooPvAoX-iW_HNugKlVhRjbObBHF5vU?usp=sharing). Contiene: arquitectura y diagrama del flujo de telemetría; instrumentación (`telemetry.js`, `/metrics` con la métrica de negocio, registros JSON con `trace_id`); el stack desplegado por GitOps; el tablero de las 4 señales de oro; SLO, reglas de registro y alertas con su runbook; el canary de `v0.1.8` revertido por métricas; el fallo controlado de RabbitMQ con el recorrido alerta → traza → registro; y la corrida de `verificar_p10.sh` |
 
 ## Documentos
 
